@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 28, 2025 at 11:32 AM
+-- Generation Time: Aug 30, 2025 at 08:53 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -222,8 +222,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `firstname`, `lastname`, `username`, `email`, `password_hash`, `phone`, `role`, `created_at`, `updated_at`) VALUES
-(1, 'ssd', 'Razor', 'ssd', 'ssd@gmail.com', '$2y$12$T2bYBpH.VbtaAqqFonM4Xe5QwO7/wSxQLr0nVD2gvF5ur069sXnMi', '0000000000', 'user', '2025-08-28 08:15:50', '2025-08-28 09:01:24'),
-(2, 'Admin', 'Adminna', 'admin', 'admin@gmail.com', '$2y$12$4GE92i3T6BOo8z5Yv11yceV96gHlRAu/b2ipx0rSM0CawnwrZcR8y', '0123456789', 'admin', '2025-08-28 09:22:19', '2025-08-28 09:23:57'),
+(1, 'ssdUpdated', 'RazorUpdated', 'ssd', 'ssd@gmail.com', '$2y$12$CC0qPkH/dXQyMJZXsy7.j.geXF/.eyZOSW.Mhi2xMiGLt6JufNS2K', '0000000000', 'user', '2025-08-28 08:15:50', '2025-08-30 18:42:45'),
+(2, 'AdminUpdated', 'AdminnaUpdated', 'admin', 'admin@gmail.com', '$2y$12$qWLk1jgW9AmYTDegQLnTx.gF4LrmSp/J3LalWgd4oS.vqJuR061Qe', '0123456789', 'admin', '2025-08-28 09:22:19', '2025-08-30 18:43:28'),
 (3, 'test', 'test', 'test', 'test@gmail.com', '$2y$12$2RhDSgmpVt4wQxileDakBesPi7fO7CbCX229722ynw9yPfWbog09m', '0222222222', 'user', '2025-08-28 09:23:38', '2025-08-28 09:23:38');
 
 --
