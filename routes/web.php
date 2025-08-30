@@ -20,8 +20,17 @@ Route::get('/reset-password/{token}', [AuthController::class, 'resetPasswordForm
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 Route::middleware(['auth'])->group(function() {
+    // Admin Dashboard
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-    Route::get('/user/home', [UserController::class, 'home'])->name('user.home');
-});
 
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    // Admin profile
+    Route::get('/admin/profile', [AdminController::class, 'editProfile'])->name('admin.profile.edit');
+    Route::post('/admin/profile', [AdminController::class, 'updateProfile'])->name('admin.profile.update');
+
+    // User Home
+    Route::get('/user/home', [UserController::class, 'home'])->name('user.home');
+
+    // Profile (แก้ไขข้อมูลผู้ใช้)
+    Route::get('/user/profile', [UserController::class, 'editProfile'])->name('user.profile.edit');
+    Route::post('/user/profile', [UserController::class, 'updateProfile'])->name('user.profile.update');
+});

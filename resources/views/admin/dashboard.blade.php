@@ -1,64 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
+@extends('layout.adminlayout')
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-        <a class="navbar-brand" href="#">Music Studio Admin</a>
-        <div class="ms-auto">
-            <a href="{{ route('logout') }}" class="btn btn-outline-light"
-               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-               Logout
-            </a>
+@section('title', 'Dashboard')
+
+@section('content')
+    <!-- Hero Section -->
+    <section id="hero" class="py-5 text-center bg-light mb-5">
+        <div class="container">
+            <h1 class="display-4">Welcome to Music Studio</h1>
+            <p class="lead">Book your rehearsal room now!</p>
+            <a href="#" class="btn btn-primary btn-lg disabled">Book Now</a>
         </div>
-    </div>
-</nav>
+    </section>
 
-<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">
-    @csrf
-</form>
-
-<div class="container mt-5">
     <h1 class="mb-4">Welcome, Admin!</h1>
     <p>นี่คือหน้า Dashboard ของผู้ดูแลระบบ</p>
 
-    <!-- ตัวอย่าง Card -->
+    <!-- Dashboard Cards -->
     <div class="row">
+        <!-- Users Card -->
         <div class="col-md-4 mb-3">
-            <div class="card">
+            <div class="card text-center">
                 <div class="card-body">
                     <h5 class="card-title">Users</h5>
                     <p class="card-text">จัดการผู้ใช้งานทั้งหมด</p>
-                    <a href="#" class="btn btn-primary">Manage</a>
+                    <a href="#" class="btn btn-secondary disabled">Manage</a>
                 </div>
             </div>
         </div>
+
+        <!-- Rooms Card -->
         <div class="col-md-4 mb-3">
-            <div class="card">
+            <div class="card text-center">
                 <div class="card-body">
                     <h5 class="card-title">Rooms</h5>
                     <p class="card-text">ดู/แก้ไขห้องซ้อม</p>
-                    <a href="#" class="btn btn-primary">Manage</a>
+                    <a href="#" class="btn btn-secondary disabled">Manage</a>
                 </div>
             </div>
         </div>
+
+        <!-- Bookings Card -->
         <div class="col-md-4 mb-3">
-            <div class="card">
+            <div class="card text-center">
                 <div class="card-body">
                     <h5 class="card-title">Bookings</h5>
                     <p class="card-text">ตรวจสอบการจองทั้งหมด</p>
-                    <a href="#" class="btn btn-primary">View</a>
+                    <a href="#" class="btn btn-secondary disabled">View</a>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
-</body>
-</html>
+@endsection
