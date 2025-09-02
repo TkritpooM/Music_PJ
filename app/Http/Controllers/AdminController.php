@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Promotion;
+use App\Models\Room;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -58,8 +60,80 @@ class AdminController extends Controller
     // -------------------------- Rooms Section -------------------------- //
     public function rooms()
     {
-        // เรียกไฟล์ view/admin/rooms.blade.php
-        return view('admin.rooms');
+        $rooms = Room::all();
+        return view('admin.roomManage.rooms', compact('rooms'));
+    }
+
+    public function storeRoom(Request $request)
+    {
+        $request->validate([
+            'name'           => 'required|string|max:100',
+            'price_per_hour' => 'required|numeric|min:0',
+            'capacity'       => 'required|integer|min:1',
+            'description'    => 'nullable|string',
+            'image_url'      => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+        ]);
+
+        $data = $request->only('name', 'price_per_hour', 'capacity', 'description');
+
+        // ถ้ามีการอัปโหลดรูป
+        if ($request->hasFile('image_url')) {
+            $path = $request->file('image_url')->store('rooms', 'public');
+            $data['image_url'] = $path;
+        }
+
+        Room::create($data);
+
+        return redirect()->route('admin.rooms')->with('success', 'เพิ่มห้องซ้อมเรียบร้อยแล้ว');
+    }
+
+    public function editRoom($id)
+    {
+        $room = Room::findOrFail($id);
+        return view('admin.roomManage.editRoom', compact('room'));
+    }
+
+    public function updateRoom(Request $request, $id)
+    {
+        $room = Room::findOrFail($id);
+
+        $request->validate([
+            'name'           => 'required|string|max:100',
+            'price_per_hour' => 'required|numeric|min:0',
+            'capacity'       => 'required|integer|min:1',
+            'description'    => 'nullable|string',
+            'image_url'      => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+        ]);
+
+        $data = $request->only('name', 'price_per_hour', 'capacity', 'description');
+
+        // ถ้ามีการอัปโหลดรูปใหม่
+        if ($request->hasFile('image_url')) {
+            // ลบไฟล์เก่าออกก่อน (ถ้ามี)
+            if ($room->image_url && Storage::disk('public')->exists($room->image_url)) {
+                Storage::disk('public')->delete($room->image_url);
+            }
+            $path = $request->file('image_url')->store('rooms', 'public');
+            $data['image_url'] = $path;
+        }
+
+        $room->update($data);
+
+        return redirect()->route('admin.rooms')->with('success', 'แก้ไขข้อมูลห้องเรียบร้อยแล้ว');
+    }
+
+    public function deleteRoom($id)
+    {
+        $room = Room::findOrFail($id);
+
+        // ลบไฟล์รูปออกด้วย
+        if ($room->image_url && Storage::disk('public')->exists($room->image_url)) {
+            Storage::disk('public')->delete($room->image_url);
+        }
+
+        $room->delete();
+
+        return redirect()->route('admin.rooms')->with('success', 'ลบห้องเรียบร้อยแล้ว');
     }
 
     // -------------------------- Promotions Section -------------------------- //

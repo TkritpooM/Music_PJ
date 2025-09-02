@@ -32,6 +32,10 @@ Route::middleware(['auth'])->group(function() {
 
     // Admin Rooms
     Route::get('/admin/rooms', [AdminController::class, 'rooms'])->name('admin.rooms');
+    Route::post('/admin/rooms', [AdminController::class, 'storeRoom'])->name('admin.rooms.store');
+    Route::get('/admin/rooms/{id}/edit', [AdminController::class, 'editRoom'])->name('admin.rooms.edit');
+    Route::put('/admin/rooms/{id}', [AdminController::class, 'updateRoom'])->name('admin.rooms.update');
+    Route::delete('/admin/rooms/{id}', [AdminController::class, 'deleteRoom'])->name('admin.rooms.delete');
 
     // --------- Admin Promotions --------- //
     Route::get('/admin/promotions', [AdminController::class, 'promotions'])->name('admin.promotions');
