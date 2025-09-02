@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Promotion;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -54,16 +55,100 @@ class AdminController extends Controller
         return redirect()->route('admin.userManagement')->with('success', 'รีเซ็ตรหัสผ่านเป็น "12345678" แล้ว');
     }
 
+    // -------------------------- Rooms Section -------------------------- //
     public function rooms()
     {
         // เรียกไฟล์ view/admin/rooms.blade.php
         return view('admin.rooms');
     }
+
+    // -------------------------- Promotions Section -------------------------- //
     public function promotions()
     {
-        // เรียกไฟล์ view/admin/promotions.blade.php
-        return view('admin.promotions');
+        $promotions = Promotion::orderBy('start_date', 'desc')->get();
+        return view('admin.promotionManage.promotions', compact('promotions'));
     }
+
+    public function createPromotion()
+    {
+        return view('admin.promotionManage.createPromotion'); // หน้าเพิ่มโปรโมชั่น
+    }
+
+    public function storePromotion(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:100',
+            'description' => 'nullable|string',
+            'discount_type' => 'required|in:percent,fixed',
+            'discount_value' => 'required|numeric|min:0',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+        ]);
+
+        Promotion::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'discount_type' => $request->discount_type,
+            'discount_value' => $request->discount_value,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'is_active' => true,
+        ]);
+
+        return redirect()->route('admin.promotions')->with('success', 'เพิ่มโปรโมชั่นเรียบร้อยแล้ว');
+    }
+
+    public function editPromotion($id)
+    {
+        $promotion = Promotion::findOrFail($id);
+        return view('admin.promotionManage.editPromotion', compact('promotion'));
+    }
+
+    public function updatePromotion(Request $request, $id)
+    {
+        $promotion = Promotion::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:100',
+            'description' => 'nullable|string',
+            'discount_type' => 'required|in:percent,fixed',
+            'discount_value' => 'required|numeric|min:0',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'is_active' => 'nullable|boolean',
+        ]);
+
+        $promotion->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'discount_type' => $request->discount_type,
+            'discount_value' => $request->discount_value,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'is_active' => $request->has('is_active') ? 1 : 0,
+        ]);
+
+        return redirect()->route('admin.promotions')->with('success', 'แก้ไขโปรโมชั่นเรียบร้อยแล้ว');
+    }
+
+    public function deletePromotion($id)
+    {
+        $promotion = Promotion::findOrFail($id);
+        $promotion->delete();
+
+        return redirect()->route('admin.promotions')->with('success', 'ลบโปรโมชั่นเรียบร้อยแล้ว');
+    }
+
+    public function togglePromotion($id)
+    {
+        $promotion = Promotion::findOrFail($id);
+        $promotion->is_active = !$promotion->is_active;
+        $promotion->save();
+
+        return redirect()->route('admin.promotions')->with('success', 'อัปเดตสถานะโปรโมชั่นเรียบร้อยแล้ว');
+    }
+
+    // -------------------------- Instruments Section -------------------------- //
     public function instruments()
     {
         // เรียกไฟล์ view/admin/instruments.blade.php

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 02, 2025 at 01:06 PM
+-- Generation Time: Sep 02, 2025 at 02:00 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -153,6 +153,16 @@ CREATE TABLE `promotions` (
   `end_date` date NOT NULL,
   `is_active` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `promotions`
+--
+
+INSERT INTO `promotions` (`promo_id`, `name`, `description`, `discount_type`, `discount_value`, `start_date`, `end_date`, `is_active`) VALUES
+(1, 'Holiday Discount', 'You can save up to 50 pounds per person !!!', 'fixed', 50.00, '2025-09-02', '2025-09-04', 1),
+(2, '100% Discount', 'Perfect payment', 'percent', 100.00, '2025-08-31', '2025-09-01', 0),
+(3, 'test', 'test', 'percent', 1222.00, '2025-09-02', '2025-09-06', 1),
+(4, 'test222', 'test222', 'fixed', 222.00, '2025-09-02', '2025-09-18', 1);
 
 -- --------------------------------------------------------
 
@@ -360,7 +370,7 @@ ALTER TABLE `payments`
 -- AUTO_INCREMENT for table `promotions`
 --
 ALTER TABLE `promotions`
-  MODIFY `promo_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `promo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `receipts`
