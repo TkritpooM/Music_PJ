@@ -9,22 +9,28 @@
     <style>
         /* Minimal dropdown styling */
         .dropdown-menu {
-            min-width: 180px; /* ลดขนาดกล่อง */
+            min-width: 180px;
+            /* ลดขนาดกล่อง */
             border-radius: 0.25rem;
-            box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,0.1);
+            box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
             padding: 0.25rem 0;
         }
+
         .dropdown-item {
             padding: 0.5rem 1rem;
             font-size: 0.95rem;
         }
+
         .dropdown-menu.mt-3 {
-            margin-top: 1rem !important; /* เว้นช่องว่างด้านบน dropdown */
+            margin-top: 1rem !important;
+            /* เว้นช่องว่างด้านบน dropdown */
         }
+
         .dropdown-item:hover {
             background-color: #f8f9fa;
             color: #212529;
         }
+
         .navbar-dark .navbar-nav .nav-link {
             font-weight: 500;
         }
@@ -40,16 +46,17 @@
             <div class="ms-auto">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             {{ Auth::user()->username }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end mt-3" aria-labelledby="adminDropdown">
                             <li><a class="dropdown-item" href="{{ route('admin.profile.edit') }}">Profile</a></li>
                             <li>
-                            <a class="dropdown-item" href="{{ route('logout') }}"
-                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                Logout
-                            </a>
+                                <a class="dropdown-item" href="{{ route('logout') }}"
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    Logout
+                                </a>
                             </li>
                         </ul>
                     </li>
@@ -69,14 +76,16 @@
             <!-- Sidebar -->
             <div class="col-md-3 mb-3">
                 <div class="list-group">
-                    <a href="#" class="list-group-item list-group-item-action disabled">Dashboard</a>
-                    <a href="#" class="list-group-item list-group-item-action disabled">Users</a>
-                    <a href="#" class="list-group-item list-group-item-action disabled">Rooms</a>
-                    <a href="#" class="list-group-item list-group-item-action disabled">Bookings</a>
-                    <a href="#" class="list-group-item list-group-item-action disabled">Reports</a>
-                    <a href="#" class="list-group-item list-group-item-action disabled">Promotions</a>
-                    <a href="#" class="list-group-item list-group-item-action disabled">Musical Instrument</a>
-                    <a href="#" class="list-group-item list-group-item-action disabled">Log</a>
+                    <a href="{{ route('admin.dashboard') }}"
+                        class="list-group-item list-group-item-action">Dashboard</a>
+                    <a href="{{ route('admin.userManagement') }}"
+                        class="list-group-item list-group-item-action">Users</a>
+                    <a href="{{ route('admin.rooms') }}" class="list-group-item list-group-item-action">Rooms</a>
+                    <a href="{{ route('admin.promotions') }}"
+                        class="list-group-item list-group-item-action">Promotions</a>
+                    <a href="{{ route('admin.instruments') }}" class="list-group-item list-group-item-action">Musical
+                        Instrument</a>
+                    <a href="{{ route('admin.log') }}" class="list-group-item list-group-item-action">Log</a>
                 </div>
             </div>
 

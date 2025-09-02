@@ -1,4 +1,5 @@
 <?php
+use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
@@ -23,6 +24,21 @@ Route::middleware(['auth'])->group(function() {
     // Admin Dashboard
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
+    // --------- Admin User Management --------- //
+    Route::get('/admin/user-management', [AdminController::class, 'userManagement'])->name('admin.userManagement');
+    Route::get('/admin/user-management/{id}/edit', [AdminController::class, 'editUser'])->name('admin.editUser');
+    Route::post('/admin/user-management/{id}/update', [AdminController::class, 'updateUser'])->name('admin.users.update');
+    Route::post('/admin/user-management/{id}/reset-password', [AdminController::class, 'resetPassword'])->name('admin.users.resetPassword');
+
+    // Admin Rooms
+    Route::get('/admin/rooms', [AdminController::class, 'rooms'])->name('admin.rooms');
+    // Admin Promotions
+    Route::get('/admin/promotions', [AdminController::class, 'promotions'])->name('admin.promotions');
+    // Admin Musical Instruments
+    Route::get('/admin/instruments', [AdminController::class, 'instruments'])->name('admin.instruments');
+    // Admin Log
+    Route::get('/admin/log', [AdminController::class, 'log'])->name('admin.log');
+
     // Admin profile
     Route::get('/admin/profile', [AdminController::class, 'editProfile'])->name('admin.profile.edit');
     Route::post('/admin/profile', [AdminController::class, 'updateProfile'])->name('admin.profile.update');
@@ -33,4 +49,8 @@ Route::middleware(['auth'])->group(function() {
     // Profile (แก้ไขข้อมูลผู้ใช้)
     Route::get('/user/profile', [UserController::class, 'editProfile'])->name('user.profile.edit');
     Route::post('/user/profile', [UserController::class, 'updateProfile'])->name('user.profile.update');
+});
+
+Route::prefix('admin')->middleware(['auth', 'is_admin'])->group(function () {
+    
 });

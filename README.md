@@ -39,3 +39,13 @@ Start the Laravel development server:
 php artisan serve
 
 Access your project at: http://127.0.0.1:8000
+
+## Simulate Dataset
+
+Account (Reset by admin : default password = 12345678)
+- User
+ssd ssd@gmail.com ssdresetupdate12345Test
+
+- Admin
+admin admin@gmail.com adminniggaupdate12345Test
+test2 test2@gmail.com 12345678
