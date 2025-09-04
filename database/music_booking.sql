@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 02, 2025 at 08:48 PM
+-- Generation Time: Sep 04, 2025 at 09:28 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -85,6 +85,15 @@ CREATE TABLE `instruments` (
   `status` enum('available','unavailable','maintenance') DEFAULT 'available'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `instruments`
+--
+
+INSERT INTO `instruments` (`instrument_id`, `category_id`, `code`, `name`, `brand`, `picture_url`, `status`) VALUES
+(2, 5, '22222', 'Dodge', 'D33', 'instruments/YNkHVTdaAdapPH6wiNWb3TTZEwDifzvZvMbU5HRD.jpg', 'available'),
+(4, 6, '22233', 'Johnson - KutchUpdate', 'JW1122', 'instruments/0dYbMvBfFkfXSp510Lb7A7xl2vELzKPqrVa0dMKJ.png', 'unavailable'),
+(7, 7, '12445', 'Johnson - Kutchhh', 'JW1122', 'instruments/sZvk9NdrIsnU1ERS4x5sAAjlC7M9NzPNYezZQd2a.jpg', 'available');
+
 -- --------------------------------------------------------
 
 --
@@ -95,6 +104,18 @@ CREATE TABLE `instrument_categories` (
   `category_id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `instrument_categories`
+--
+
+INSERT INTO `instrument_categories` (`category_id`, `name`) VALUES
+(2, 'กีตาร์'),
+(3, 'คีย์บอร์ด'),
+(4, 'ไวโอลิน'),
+(5, 'YippyCat'),
+(6, 'Jewery'),
+(7, 'CattyEIEI');
 
 -- --------------------------------------------------------
 
@@ -161,7 +182,7 @@ CREATE TABLE `promotions` (
 INSERT INTO `promotions` (`promo_id`, `name`, `description`, `discount_type`, `discount_value`, `start_date`, `end_date`, `is_active`) VALUES
 (1, 'Holiday Discount', 'You can save up to 50 pounds per person !!!', 'fixed', 50.00, '2025-09-02', '2025-09-04', 1),
 (2, '100% Discount', 'Perfect payment', 'percent', 100.00, '2025-08-31', '2025-09-01', 0),
-(3, 'test', 'test', 'percent', 1222.00, '2025-09-02', '2025-09-06', 1),
+(3, 'Holiday Discount Scoopy', 'test', 'percent', 99.99, '2025-09-02', '2025-09-06', 1),
 (4, 'test222', 'test222', 'fixed', 222.00, '2025-09-02', '2025-09-18', 1);
 
 -- --------------------------------------------------------
@@ -201,8 +222,7 @@ CREATE TABLE `rooms` (
 --
 
 INSERT INTO `rooms` (`room_id`, `name`, `price_per_hour`, `capacity`, `description`, `image_url`, `created_at`) VALUES
-(4, 'A1', 500.00, 6, 'ห้องซ้อมขนาดกลาง เก็บเสียงอย่างดี พร้อมเครื่องดนตรีครบวงจร (กลองชุด, กีตาร์, เบส, คีย์บอร์ด)', 'rooms/Q9qYOp1T4teyFBaSHMxcuV22AjkwDcISfAYHjzlZ.jpg', '2025-09-02 14:41:20'),
-(6, 'sdas', 12.00, 12, 'ห้องซ้อมขนาดกลาง เก็บเสียงอย่างดี พร้อมเครื่องดนตรีครบวงจร (กลองชุด, กีตาร์, เบส, คีย์บอร์ด)', 'rooms/MyFsirMEyzIGJE67rom0fCZGkRwlLkZgRMEnE17d.jpg', '2025-09-02 15:48:33');
+(9, 'A11', 5.00, 5, 'ห้องซ้อมขนาดกลาง เก็บเสียงอย่างดี พร้อมเครื่องดนตรีครบวงจร (กลองชุด, กีตาร์, เบส, คีย์บอร์ด)', 'rooms/KS4NNo50GIQ9maZGpPgsCpq3CXcFZmQKIYF1hSGa.jpg', '2025-09-04 06:12:23');
 
 -- --------------------------------------------------------
 
@@ -215,6 +235,13 @@ CREATE TABLE `room_instruments` (
   `instrument_id` int(11) NOT NULL,
   `quantity` int(11) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `room_instruments`
+--
+
+INSERT INTO `room_instruments` (`room_id`, `instrument_id`, `quantity`) VALUES
+(9, 7, 6);
 
 -- --------------------------------------------------------
 
@@ -354,13 +381,13 @@ ALTER TABLE `bookings`
 -- AUTO_INCREMENT for table `instruments`
 --
 ALTER TABLE `instruments`
-  MODIFY `instrument_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `instrument_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `instrument_categories`
 --
 ALTER TABLE `instrument_categories`
-  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `password_resets`
@@ -390,7 +417,7 @@ ALTER TABLE `receipts`
 -- AUTO_INCREMENT for table `rooms`
 --
 ALTER TABLE `rooms`
-  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `users`

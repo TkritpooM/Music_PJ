@@ -7,7 +7,11 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Promotion;
 use App\Models\Room;
+use App\Models\InstrumentCategory;
+use App\Models\Instrument;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 
 class AdminController extends Controller
 {
@@ -58,6 +62,8 @@ class AdminController extends Controller
     }
 
     // -------------------------- Rooms Section -------------------------- //
+
+    // Rooms
     public function rooms()
     {
         $rooms = Room::all();
@@ -67,11 +73,26 @@ class AdminController extends Controller
     public function storeRoom(Request $request)
     {
         $request->validate([
-            'name'           => 'required|string|max:100',
+            'name'           => 'required|string|max:100|unique:rooms,name',
             'price_per_hour' => 'required|numeric|min:0',
             'capacity'       => 'required|integer|min:1',
-            'description'    => 'nullable|string',
-            'image_url'      => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'description'    => 'nullable|string|max:500',
+            'image_url'      => 'nullable|image|mimes:jpg,jpeg,png|max:5120', // 5MB
+        ], [
+            'name.required'           => 'กรุณากรอกชื่อห้อง',
+            'name.max'                => 'ชื่อห้องต้องไม่เกิน 100 ตัวอักษร',
+            'name.unique'             => 'ชื่อห้องนี้มีอยู่แล้ว โปรดเปลี่ยนชื่อ',
+            'price_per_hour.required' => 'กรุณากรอกราคาต่อชั่วโมง',
+            'price_per_hour.numeric'  => 'ราคาต้องเป็นตัวเลข',
+            'price_per_hour.min'      => 'ราคาต้องไม่น้อยกว่า 0',
+            'capacity.required'       => 'กรุณากรอกจำนวนผู้ใช้สูงสุด',
+            'capacity.integer'        => 'จำนวนผู้ใช้ต้องเป็นจำนวนเต็ม',
+            'capacity.min'            => 'จำนวนผู้ใช้ต้องไม่น้อยกว่า 1',
+            'description.string'      => 'คำอธิบายต้องเป็นข้อความ',
+            'description.max'         => 'คำอธิบายต้องไม่เกิน 500 ตัวอักษร',
+            'image_url.image'         => 'ไฟล์ต้องเป็นรูปภาพ',
+            'image_url.mimes'         => 'ไฟล์รูปภาพต้องเป็น jpg, jpeg หรือ png',
+            'image_url.max'           => 'ขนาดไฟล์รูปภาพต้องไม่เกิน 5MB',
         ]);
 
         $data = $request->only('name', 'price_per_hour', 'capacity', 'description');
@@ -136,6 +157,60 @@ class AdminController extends Controller
         return redirect()->route('admin.rooms')->with('success', 'ลบห้องเรียบร้อยแล้ว');
     }
 
+    // Adding Instrument to Rooms
+    // แสดงเครื่องดนตรีทั้งหมดในห้อง
+    public function showRoomInstruments($roomId)
+    {
+        $room = Room::with('instruments')->findOrFail($roomId);
+        $instruments = Instrument::all(); // สำหรับเลือกเพิ่มใหม่
+        return view('admin.roomManage.room_instruments', compact('room', 'instruments'));
+    }
+
+    // เพิ่มเครื่องดนตรีให้ห้อง
+    public function addInstrumentToRoom(Request $request, $roomId)
+    {
+        $request->validate([
+            'instrument_id' => 'required|exists:instruments,instrument_id',
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        $room = Room::findOrFail($roomId);
+
+        // ตรวจสอบ duplicate
+        if ($room->instruments()->where('room_instruments.instrument_id', $request->instrument_id)->exists()) {
+            return redirect()->back()->withErrors(['duplicate' => 'เครื่องดนตรีนี้มีอยู่ในห้องแล้ว']);
+        }
+
+        // เพิ่ม pivot table
+        $room->instruments()->attach($request->instrument_id, ['quantity' => $request->quantity]);
+
+        return redirect()->back()->with('success', 'เพิ่มเครื่องดนตรีให้ห้องเรียบร้อยแล้ว');
+    }
+
+    // อัปเดตจำนวนเครื่องดนตรีในห้อง
+    public function updateRoomInstrument(Request $request, $roomId, $instrumentId)
+    {
+        $request->validate([
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        $room = Room::findOrFail($roomId);
+        $room->instruments()->updateExistingPivot($instrumentId, [
+            'quantity' => $request->quantity
+        ]);
+
+        return back()->with('success', 'อัปเดตจำนวนเครื่องดนตรีเรียบร้อยแล้ว');
+    }
+
+    // ลบเครื่องดนตรีออกจากห้อง
+    public function detachInstrumentFromRoom($roomId, $instrumentId)
+    {
+        $room = Room::findOrFail($roomId);
+        $room->instruments()->detach($instrumentId);
+
+        return back()->with('success', 'ลบเครื่องดนตรีออกจากห้องเรียบร้อยแล้ว');
+    }
+
     // -------------------------- Promotions Section -------------------------- //
     public function promotions()
     {
@@ -151,12 +226,34 @@ class AdminController extends Controller
     public function storePromotion(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:100',
-            'description' => 'nullable|string',
+            'name' => 'required|string|max:100|unique:promotions,name',
+            'description' => 'nullable|string|max:500',
             'discount_type' => 'required|in:percent,fixed',
-            'discount_value' => 'required|numeric|min:0',
+            'discount_value' => ['required','numeric','min:0',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->discount_type === 'percent' && $value > 100) {
+                        $fail('ส่วนลดแบบเปอร์เซ็นต์ต้องไม่เกิน 100');
+                    }
+                }
+            ],
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
+        ], [
+            'name.required' => 'กรุณากรอกชื่อโปรโมชั่น',
+            'name.max' => 'ชื่อโปรโมชั่นต้องไม่เกิน 100 ตัวอักษร',
+            'name.unique' => 'ชื่อโปรโมชั่นนี้มีอยู่แล้ว',
+            'description.string' => 'คำอธิบายต้องเป็นข้อความ',
+            'description.max' => 'คำอธิบายต้องไม่เกิน 500 ตัวอักษร',
+            'discount_type.required' => 'กรุณาเลือกประเภทส่วนลด',
+            'discount_type.in' => 'ประเภทส่วนลดต้องเป็น percent หรือ fixed',
+            'discount_value.required' => 'กรุณากรอกจำนวนส่วนลด',
+            'discount_value.numeric' => 'จำนวนส่วนลดต้องเป็นตัวเลข',
+            'discount_value.min' => 'จำนวนส่วนลดต้องไม่น้อยกว่า 0',
+            'start_date.required' => 'กรุณาเลือกวันเริ่มต้นโปรโมชั่น',
+            'start_date.date' => 'วันเริ่มต้นไม่ถูกต้อง',
+            'end_date.required' => 'กรุณาเลือกวันสิ้นสุดโปรโมชั่น',
+            'end_date.date' => 'วันสิ้นสุดไม่ถูกต้อง',
+            'end_date.after_or_equal' => 'วันสิ้นสุดต้องไม่ก่อนวันเริ่มต้น',
         ]);
 
         Promotion::create([
@@ -183,13 +280,35 @@ class AdminController extends Controller
         $promotion = Promotion::findOrFail($id);
 
         $request->validate([
-            'name' => 'required|string|max:100',
-            'description' => 'nullable|string',
+            'name' => 'required|string|max:100|unique:promotions,name,' . $id . ',promo_id',
+            'description' => 'nullable|string|max:500',
             'discount_type' => 'required|in:percent,fixed',
-            'discount_value' => 'required|numeric|min:0',
+            'discount_value' => ['required','numeric','min:0',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->discount_type === 'percent' && $value > 100) {
+                        $fail('ส่วนลดแบบเปอร์เซ็นต์ต้องไม่เกิน 100');
+                    }
+                }
+            ],
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'is_active' => 'nullable|boolean',
+        ], [
+            'name.required' => 'กรุณากรอกชื่อโปรโมชั่น',
+            'name.max' => 'ชื่อโปรโมชั่นต้องไม่เกิน 100 ตัวอักษร',
+            'name.unique' => 'ชื่อโปรโมชั่นนี้มีอยู่แล้ว',
+            'description.string' => 'คำอธิบายต้องเป็นข้อความ',
+            'description.max' => 'คำอธิบายต้องไม่เกิน 500 ตัวอักษร',
+            'discount_type.required' => 'กรุณาเลือกประเภทส่วนลด',
+            'discount_type.in' => 'ประเภทส่วนลดต้องเป็น percent หรือ fixed',
+            'discount_value.required' => 'กรุณากรอกจำนวนส่วนลด',
+            'discount_value.numeric' => 'จำนวนส่วนลดต้องเป็นตัวเลข',
+            'discount_value.min' => 'จำนวนส่วนลดต้องไม่น้อยกว่า 0',
+            'start_date.required' => 'กรุณาเลือกวันเริ่มต้นโปรโมชั่น',
+            'start_date.date' => 'วันเริ่มต้นไม่ถูกต้อง',
+            'end_date.required' => 'กรุณาเลือกวันสิ้นสุดโปรโมชั่น',
+            'end_date.date' => 'วันสิ้นสุดไม่ถูกต้อง',
+            'end_date.after_or_equal' => 'วันสิ้นสุดต้องไม่ก่อนวันเริ่มต้น',
         ]);
 
         $promotion->update([
@@ -223,18 +342,228 @@ class AdminController extends Controller
     }
 
     // -------------------------- Instruments Section -------------------------- //
-    public function instruments()
+
+    // Instruments Category
+    public function instrumentCategories()
     {
-        // เรียกไฟล์ view/admin/instruments.blade.php
-        return view('admin.instruments');
+        $categories = InstrumentCategory::all();
+        return view('admin.instrumentManage.instrument_categories', compact('categories'));
     }
+
+    public function storeInstrumentCategory(Request $request)
+    {
+        // ตัดช่องว่างก่อน validate
+        $name = trim($request->name);
+
+        $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:100',
+                Rule::unique('instrument_categories')->where(function ($query) use ($name) {
+                    return $query->whereRaw('LOWER(name) = ?', [Str::lower($name)]);
+                }),
+            ],
+        ], [
+            'name.required' => 'กรุณากรอกชื่อประเภทเครื่องดนตรี',
+            'name.string'   => 'ชื่อประเภทเครื่องดนตรีต้องเป็นข้อความ',
+            'name.max'      => 'ชื่อประเภทเครื่องดนตรีต้องไม่เกิน 100 ตัวอักษร',
+            'name.unique'   => 'ประเภทเครื่องดนตรีนี้มีอยู่แล้ว',
+        ]);
+
+        InstrumentCategory::create([
+            'name' => $request->name,
+        ]);
+
+        return redirect()->route('admin.instrumentCategories')->with('success', 'เพิ่มประเภทเครื่องดนตรีเรียบร้อยแล้ว');
+    }
+
+    public function deleteSelectedInstrumentCategories(Request $request)
+    {
+        $ids = $request->ids;
+        if(!$ids || !is_array($ids)){
+            return response()->json(['success' => false]);
+        }
+
+        // ลบเครื่องดนตรีใน category ที่เลือกด้วย (ถ้ามี)
+        \App\Models\Instrument::whereIn('category_id', $ids)->delete();
+
+        // ลบ category
+        InstrumentCategory::whereIn('category_id', $ids)->delete();
+
+        return response()->json(['success' => true]);
+    }
+
+    // Instruments By Category
+    public function instrumentsByCategory($category_id)
+    {
+        $category = InstrumentCategory::findOrFail($category_id);
+        $instruments = Instrument::where('category_id', $category_id)->get();
+        return view('admin.instrumentManage.instruments', compact('category', 'instruments'));
+    }
+
+    public function storeInstrument(Request $request)
+    {
+        $request->validate([
+            'category_id' => 'required|exists:instrument_categories,category_id',
+            'code' => 'required|string|max:20|unique:instruments,code',
+            'name' => 'required|string|max:100',
+            'brand' => 'nullable|string|max:100',
+            'picture_url' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'status' => 'required|in:available,unavailable,maintenance',
+        ], [
+            'category_id.required' => 'กรุณาเลือกประเภทเครื่องดนตรี',
+            'category_id.exists' => 'ประเภทเครื่องดนตรีไม่ถูกต้อง',
+            'code.required' => 'กรุณากรอกรหัสเครื่องดนตรี',
+            'code.unique' => 'รหัสเครื่องดนตรีนี้มีอยู่แล้ว',
+            'name.required' => 'กรุณากรอกชื่อเครื่องดนตรี',
+            'status.required' => 'กรุณาเลือกสถานะเครื่องดนตรี',
+            'status.in' => 'สถานะเครื่องดนตรีไม่ถูกต้อง',
+            'picture_url.image' => 'ไฟล์ต้องเป็นรูปภาพ',
+            'picture_url.mimes' => 'รองรับเฉพาะไฟล์ jpg/jpeg/png',
+            'picture_url.max' => 'ไฟล์รูปภาพไม่เกิน 5MB',
+        ]);
+
+        $data = $request->only('category_id','code','name','brand','status');
+
+        if ($request->hasFile('picture_url')) {
+            $path = $request->file('picture_url')->store('instruments', 'public');
+            $data['picture_url'] = $path;
+        }
+
+        Instrument::create($data);
+
+        return back()->with('success', 'เพิ่มเครื่องดนตรีเรียบร้อยแล้ว');
+    }
+
+    public function updateInstrument(Request $request, $id)
+    {
+        $instrument = Instrument::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:100',
+            'brand' => 'nullable|string|max:100',
+            'picture_url' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'status' => 'required|in:available,unavailable,maintenance',
+        ], [
+            'name.required' => 'กรุณากรอกชื่อเครื่องดนตรี',
+            'status.required' => 'กรุณาเลือกสถานะเครื่องดนตรี',
+            'status.in' => 'สถานะเครื่องดนตรีไม่ถูกต้อง',
+            'picture_url.image' => 'ไฟล์ต้องเป็นรูปภาพ',
+            'picture_url.mimes' => 'รองรับเฉพาะไฟล์ jpg/jpeg/png',
+            'picture_url.max' => 'ไฟล์รูปภาพไม่เกิน 5MB',
+        ]);
+
+        $data = $request->only('name','brand','status');
+
+        if ($request->hasFile('picture_url')) {
+            if ($instrument->picture_url && Storage::disk('public')->exists($instrument->picture_url)) {
+                Storage::disk('public')->delete($instrument->picture_url);
+            }
+            $path = $request->file('picture_url')->store('instruments', 'public');
+            $data['picture_url'] = $path;
+        }
+
+        $instrument->update($data);
+
+        return back()->with('success', 'แก้ไขข้อมูลเครื่องดนตรีเรียบร้อยแล้ว');
+    }
+
+    public function deleteInstrument($id)
+    {
+        $instrument = Instrument::findOrFail($id);
+
+        if ($instrument->picture_url && Storage::disk('public')->exists($instrument->picture_url)) {
+            Storage::disk('public')->delete($instrument->picture_url);
+        }
+
+        $instrument->delete();
+
+        return back()->with('success', 'ลบเครื่องดนตรีเรียบร้อยแล้ว');
+    }
+
+    // Rooms used by instrument
+    public function showInstrument($id)
+    {
+        $instrument = Instrument::with('rooms')->findOrFail($id);
+        return view('admin.instrumentManage.show', compact('instrument'));
+    }
+
+    public function addRoomToInstrument($instrumentId)
+    {
+        $instrument = Instrument::findOrFail($instrumentId);
+        $rooms = Room::all(); // เลือกได้ทั้งหมด หรือจะกรองตามเงื่อนไข
+        return view('admin.instrumentManage.addRoom', compact('instrument', 'rooms'));
+    }
+
+    public function storeInstrumentRoom(Request $request, $instrumentId)
+    {
+        $instrument = Instrument::findOrFail($instrumentId);
+
+        // ✅ ใส่ validation และเช็ค duplicate
+        $request->validate([
+            'room_id' => 'required|exists:rooms,room_id',
+            'quantity' => 'required|integer|min:1',
+        ], [
+            'room_id.required' => 'กรุณาเลือกห้อง',
+            'room_id.exists' => 'ห้องที่เลือกไม่ถูกต้อง',
+            'quantity.required' => 'กรุณากรอกจำนวน',
+            'quantity.min' => 'จำนวนต้องมากกว่า 0',
+        ]);
+
+        // ป้องกัน duplicate entry
+        $exists = $instrument->rooms()->wherePivot('room_id', $request->room_id)->exists();
+        if ($exists) {
+            return back()
+                ->withErrors(['room_id' => 'ห้องนี้มีอยู่แล้วสำหรับเครื่องดนตรีนี้'], 'instrumentRoom')
+                ->withInput(['instrument_id' => $instrumentId, 'room_id' => $request->room_id, 'quantity' => $request->quantity]);
+        }
+        
+        // หรือถ้า validation error จะถูก handle โดย Laravel อัตโนมัติ
+        // ให้แน่ใจว่า old('instrument_id') ถูกตั้ง
+        $request->merge(['instrument_id' => $instrumentId]);
+
+        // เพิ่มห้องให้เครื่องดนตรี
+        $instrument->rooms()->attach($request->room_id, ['quantity' => $request->quantity]);
+
+        return redirect()->back()->with('success', 'เพิ่มห้องให้เครื่องดนตรีเรียบร้อยแล้ว');
+    }
+
+    // อัพเดทจำนวนเครื่องดนตรีใน pivot
+    public function updateInstrumentRoom(Request $request, $instrumentId, $roomId)
+    {
+        $request->validate([
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        $instrument = Instrument::findOrFail($instrumentId);
+        $instrument->rooms()->updateExistingPivot($roomId, [
+            'quantity' => $request->quantity
+        ]);
+
+        return back()->with('success', 'อัปเดตจำนวนเรียบร้อยแล้ว ✅');
+    }
+
+    // ลบห้องออกจากเครื่องดนตรี
+    public function detachRoom($instrumentId, $roomId)
+    {
+        $instrument = Instrument::findOrFail($instrumentId);
+        $instrument->rooms()->detach($roomId);
+
+        return back()->with('success', 'ลบห้องออกเรียบร้อยแล้ว ❌');
+    }
+
+
+
+
+    // -------------------------- Log Section -------------------------- //
     public function log()
     {
         // เรียกไฟล์ view/admin/log.blade.php
         return view('admin.log');
     }
 
-
+    // -------------------------- Profile Setting Section -------------------------- //
     public function editProfile()
     {
         $admin = auth()->user(); // ตรวจสอบว่าเป็น admin ด้วย middleware
