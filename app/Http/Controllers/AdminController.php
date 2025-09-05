@@ -119,11 +119,26 @@ class AdminController extends Controller
         $room = Room::findOrFail($id);
 
         $request->validate([
-            'name'           => 'required|string|max:100',
+            'name' => 'required|string|max:100',
             'price_per_hour' => 'required|numeric|min:0',
-            'capacity'       => 'required|integer|min:1',
-            'description'    => 'nullable|string',
-            'image_url'      => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'capacity' => 'required|integer|min:1',
+            'description' => 'nullable|string|max:500',
+            'image_url' => 'nullable|image|mimes:jpg,jpeg,png|max:5120', // ขนาดสูงสุด 5MB
+        ], [
+            'name.required' => 'กรุณากรอกชื่อห้อง',
+            'name.string' => 'ชื่อห้องต้องเป็นข้อความ',
+            'name.max' => 'ชื่อห้องต้องไม่เกิน 100 ตัวอักษร',
+            'price_per_hour.required' => 'กรุณากรอกราคา/ชั่วโมง',
+            'price_per_hour.numeric' => 'ราคา/ชั่วโมงต้องเป็นตัวเลข',
+            'price_per_hour.min' => 'ราคา/ชั่วโมงต้องไม่เป็นค่าลบ',
+            'capacity.required' => 'กรุณากรอกจำนวนคน',
+            'capacity.integer' => 'จำนวนคนต้องเป็นจำนวนเต็ม',
+            'capacity.min' => 'จำนวนคนต้องมากกว่า 0',
+            'description.string' => 'คำอธิบายต้องเป็นข้อความ',
+            'description.max' => 'คำอธิบายต้องไม่เกิน 500 ตัวอักษร',
+            'image_url.image' => 'ไฟล์ต้องเป็นรูปภาพ',
+            'image_url.mimes' => 'ไฟล์รูปต้องเป็น jpg, jpeg หรือ png',
+            'image_url.max' => 'ไฟล์รูปต้องมีขนาดไม่เกิน 5MB',
         ]);
 
         $data = $request->only('name', 'price_per_hour', 'capacity', 'description');
