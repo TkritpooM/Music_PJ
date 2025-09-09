@@ -41,7 +41,7 @@
                 </div>
 
                 {{-- ลิงก์เข้าห้องเครื่องดนตรี --}}
-                <a href="{{ url('/admin/instruments/'.$category->category_id) }}" class="text-decoration-none text-dark d-block mt-4">
+                <a href="{{ url('/instruments/'.$category->category_id) }}" class="text-decoration-none text-dark d-block mt-4">
                     {{-- Icon --}}
                     <div class="fs-1 mb-3">
                         @php

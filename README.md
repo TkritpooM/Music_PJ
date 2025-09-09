@@ -60,6 +60,7 @@ Access your project at:
 - `ssd` — **ssd@gmail.com** — `ssdresetupdate12345Test`  
 - `Testing123` — **Testing123@gmail.com** — `Testing123ggg`  
 - `Testing333` — **Testing333@gmail.com** — `Testing333ggg`
+- `Newlookauth3` — **Newlookauth3@gmail.com** — `Newlookauth3cyreneNewlookauth3cyrene`
 
 ### 🛠 Admin Accounts
 - `admin` — **admin@gmail.com** — `adminniggaupdate12345Test`  
