@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Room;
 use App\Models\Instrument;
+use App\Models\ActivityLog;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class RoomManageController extends Controller
 {
@@ -51,6 +53,14 @@ class RoomManageController extends Controller
 
         Room::create($data);
 
+        // Log
+        ActivityLog::create([
+            'user_id'    => Auth::id(),
+            'role'       => 'admin',
+            'action_type'=> 'create_room',
+            'details'    => "เพิ่มห้องใหม่",
+        ]);
+
         return redirect()->route('admin.rooms')->with('success', 'เพิ่มห้องซ้อมเรียบร้อยแล้ว');
     }
 
@@ -87,6 +97,8 @@ class RoomManageController extends Controller
             'image_url.max' => 'ไฟล์รูปต้องมีขนาดไม่เกิน 5MB',
         ]);
 
+        $oldData = $room->toArray();
+
         $data = $request->only('name', 'price_per_hour', 'capacity', 'description');
 
         // ถ้ามีการอัปโหลดรูปใหม่
@@ -101,6 +113,14 @@ class RoomManageController extends Controller
 
         $room->update($data);
 
+        // Log
+        ActivityLog::create([
+            'user_id'    => Auth::id(),
+            'role'       => 'admin',
+            'action_type'=> 'update_room',
+            'details'    => "แก้ไขห้อง [ID: {$room->room_id}] จาก [ชื่อ: {$oldData['name']}, ราคา/ชม.: {$oldData['price_per_hour']}, ความจุ: {$oldData['capacity']}] → [ชื่อ: {$room->name}, ราคา/ชม.: {$room->price_per_hour}, ความจุ: {$room->capacity}]",
+        ]);
+
         return redirect()->route('admin.rooms')->with('success', 'แก้ไขข้อมูลห้องเรียบร้อยแล้ว');
     }
 
@@ -114,6 +134,14 @@ class RoomManageController extends Controller
         }
 
         $room->delete();
+
+        // Log
+        ActivityLog::create([
+            'user_id'    => Auth::id(),
+            'role'       => 'admin',
+            'action_type'=> 'delete_room',
+            'details'    => "ลบห้อง [ID: {$id}, ชื่อ: {$room->name}]",
+        ]);
 
         return redirect()->route('admin.rooms')->with('success', 'ลบห้องเรียบร้อยแล้ว');
     }
@@ -145,6 +173,16 @@ class RoomManageController extends Controller
         // เพิ่ม pivot table
         $room->instruments()->attach($request->instrument_id, ['quantity' => $request->quantity]);
 
+        $instrument = Instrument::find($request->instrument_id);
+
+        // Log
+        ActivityLog::create([
+            'user_id'    => Auth::id(),
+            'role'       => 'admin',
+            'action_type'=> 'add_instrument_to_room',
+            'details'    => "เพิ่มเครื่องดนตรี [{$instrument->name}] จำนวน {$request->quantity} ในห้อง [ID: {$room->room_id}, ชื่อ: {$room->name}]",
+        ]);
+
         return redirect()->back()->with('success', 'เพิ่มเครื่องดนตรีให้ห้องเรียบร้อยแล้ว');
     }
 
@@ -156,8 +194,25 @@ class RoomManageController extends Controller
         ]);
 
         $room = Room::findOrFail($roomId);
+
+        $oldQuantity = $room->instruments()
+            ->where('room_instruments.instrument_id', $instrumentId) // ระบุ table ชัดเจน
+            ->first()
+            ->pivot
+            ->quantity;
+            
         $room->instruments()->updateExistingPivot($instrumentId, [
             'quantity' => $request->quantity
+        ]);
+
+        $instrument = Instrument::find($instrumentId);
+
+        // Log
+        ActivityLog::create([
+            'user_id'    => Auth::id(),
+            'role'       => 'admin',
+            'action_type'=> 'update_instrument_quantity',
+            'details'    => "แก้ไขจำนวนเครื่องดนตรี [{$instrument->name}] ในห้อง [{$room->name}] จาก {$oldQuantity} → {$request->quantity}",
         ]);
 
         return back()->with('success', 'อัปเดตจำนวนเครื่องดนตรีเรียบร้อยแล้ว');
@@ -167,7 +222,16 @@ class RoomManageController extends Controller
     public function detachInstrumentFromRoom($roomId, $instrumentId)
     {
         $room = Room::findOrFail($roomId);
+        $instrument = Instrument::find($instrumentId);
         $room->instruments()->detach($instrumentId);
+
+        // Log
+        ActivityLog::create([
+            'user_id'    => Auth::id(),
+            'role'       => 'admin',
+            'action_type'=> 'remove_instrument_from_room',
+            'details'    => "ลบเครื่องดนตรี [{$instrument->name}] ออกจากห้อง [{$room->name}]",
+        ]);
 
         return back()->with('success', 'ลบเครื่องดนตรีออกจากห้องเรียบร้อยแล้ว');
     }

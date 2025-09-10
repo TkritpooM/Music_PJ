@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Instrument;
 use App\Models\InstrumentCategory;
-use App\Models\Room;                        
-use Illuminate\Support\Facades\Storage;      
-use Illuminate\Support\Str;                  
-use Illuminate\Validation\Rule;              
+use App\Models\Room;
+use App\Models\ActivityLog;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 
 class InstrumentManageController extends Controller
 {
@@ -43,8 +45,13 @@ class InstrumentManageController extends Controller
             'name.unique'   => 'ประเภทเครื่องดนตรีนี้มีอยู่แล้ว',
         ]);
 
-        InstrumentCategory::create([
-            'name' => $request->name,
+        $category = InstrumentCategory::create(['name' => $request->name,]);
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'role' => 'admin',
+            'action_type' => 'create_instrument_category',
+            'details' => "เพิ่มประเภทเครื่องดนตรี [{$category->name}]",
         ]);
 
         return redirect()->route('admin.instrumentCategories')->with('success', 'เพิ่มประเภทเครื่องดนตรีเรียบร้อยแล้ว');
@@ -57,8 +64,22 @@ class InstrumentManageController extends Controller
             return response()->json(['success' => false]);
         }
 
-        // ลบเครื่องดนตรีใน category ที่เลือกด้วย (ถ้ามี)
-        \App\Models\Instrument::whereIn('category_id', $ids)->delete();
+        $categories = InstrumentCategory::whereIn('category_id', $ids)->get();
+
+        // ลบเครื่องดนตรีใน category
+        foreach($categories as $cat){
+            Instrument::where('category_id', $cat->category_id)->delete();
+
+            ActivityLog::create([
+                'user_id' => Auth::id(),
+                'role' => 'admin',
+                'action_type' => 'delete_instrument_category',
+                'details' => "ลบประเภทเครื่องดนตรี [{$cat->name}] และเครื่องดนตรีทั้งหมดใน category นี้",
+            ]);
+        }
+
+        // // ลบเครื่องดนตรีใน category ที่เลือกด้วย (ถ้ามี)
+        // \App\Models\Instrument::whereIn('category_id', $ids)->delete();
 
         // ลบ category
         InstrumentCategory::whereIn('category_id', $ids)->delete();
@@ -103,7 +124,14 @@ class InstrumentManageController extends Controller
             $data['picture_url'] = $path;
         }
 
-        Instrument::create($data);
+        $instrument = Instrument::create($data);
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'role' => 'admin',
+            'action_type' => 'create_instrument',
+            'details' => "เพิ่มเครื่องดนตรี [{$instrument->name}] รหัส: {$instrument->code}",
+        ]);
 
         return back()->with('success', 'เพิ่มเครื่องดนตรีเรียบร้อยแล้ว');
     }
@@ -111,6 +139,7 @@ class InstrumentManageController extends Controller
     public function updateInstrument(Request $request, $id)
     {
         $instrument = Instrument::findOrFail($id);
+        $oldData = $instrument->toArray();
 
         $request->validate([
             'name' => 'required|string|max:100',
@@ -138,18 +167,34 @@ class InstrumentManageController extends Controller
 
         $instrument->update($data);
 
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'role' => 'admin',
+            'action_type' => 'update_instrument',
+            'details' => "แก้ไขเครื่องดนตรี [{$oldData['name']}] → [{$instrument->name}]",
+        ]);
+
         return back()->with('success', 'แก้ไขข้อมูลเครื่องดนตรีเรียบร้อยแล้ว');
     }
 
     public function deleteInstrument($id)
     {
         $instrument = Instrument::findOrFail($id);
+        $name = $instrument->name;
+        $code = $instrument->code;
 
         if ($instrument->picture_url && Storage::disk('public')->exists($instrument->picture_url)) {
             Storage::disk('public')->delete($instrument->picture_url);
         }
 
         $instrument->delete();
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'role' => 'admin',
+            'action_type' => 'delete_instrument',
+            'details' => "ลบเครื่องดนตรี [{$name}] รหัส: {$code}",
+        ]);
 
         return back()->with('success', 'ลบเครื่องดนตรีเรียบร้อยแล้ว');
     }
@@ -198,6 +243,15 @@ class InstrumentManageController extends Controller
         // เพิ่มห้องให้เครื่องดนตรี
         $instrument->rooms()->attach($request->room_id, ['quantity' => $request->quantity]);
 
+        $room = Room::find($request->room_id);
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'role' => 'admin',
+            'action_type' => 'add_room_to_instrument',
+            'details' => "เพิ่มห้อง [{$room->name}] ให้เครื่องดนตรี [{$instrument->name}] จำนวน {$request->quantity}",
+        ]);
+
         return redirect()->back()->with('success', 'เพิ่มห้องให้เครื่องดนตรีเรียบร้อยแล้ว');
     }
 
@@ -209,8 +263,15 @@ class InstrumentManageController extends Controller
         ]);
 
         $instrument = Instrument::findOrFail($instrumentId);
-        $instrument->rooms()->updateExistingPivot($roomId, [
-            'quantity' => $request->quantity
+        $oldQuantity = $instrument->rooms()->wherePivot('room_id', $roomId)->first()->pivot->quantity;
+        $instrument->rooms()->updateExistingPivot($roomId, ['quantity' => $request->quantity]);
+        $room = Room::find($roomId);
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'role' => 'admin',
+            'action_type' => 'update_instrument_room',
+            'details' => "อัปเดตจำนวนเครื่องดนตรี [{$instrument->name}] ในห้อง [{$room->name}] จาก {$oldQuantity} → {$request->quantity}",
         ]);
 
         return back()->with('success', 'อัปเดตจำนวนเรียบร้อยแล้ว ✅');
@@ -220,7 +281,15 @@ class InstrumentManageController extends Controller
     public function detachRoom($instrumentId, $roomId)
     {
         $instrument = Instrument::findOrFail($instrumentId);
+        $room = Room::findOrFail($roomId);
         $instrument->rooms()->detach($roomId);
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'role' => 'admin',
+            'action_type' => 'detach_room_from_instrument',
+            'details' => "ลบห้อง [{$room->name}] ออกจากเครื่องดนตรี [{$instrument->name}]",
+        ]);
 
         return back()->with('success', 'ลบห้องออกเรียบร้อยแล้ว ❌');
     }

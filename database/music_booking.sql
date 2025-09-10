@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 10, 2025 at 07:46 PM
+-- Generation Time: Sep 10, 2025 at 09:21 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -83,7 +83,45 @@ INSERT INTO `activity_logs` (`log_id`, `user_id`, `role`, `action_type`, `detail
 (40, 6, 'user', 'delete_booking', 'ลบการจอง #77 และข้อมูลที่เกี่ยวข้องทั้งหมด', '2025-09-10 11:44:04'),
 (41, 6, 'user', 'confirm_payment', 'Booking #00081 confirmed via QR Code', '2025-09-10 17:28:27'),
 (42, 6, 'user', 'confirm_payment', 'Booking #00082 confirmed via QR Code', '2025-09-10 17:35:59'),
-(43, 6, 'user', 'update_profile', 'User updated profile information', '2025-09-10 17:40:33');
+(43, 6, 'user', 'update_profile', 'User updated profile information', '2025-09-10 17:40:33'),
+(44, 3, 'admin', 'update_profile', 'แก้ไขโปรไฟล์จาก [ชื่อ: test2Logg test2Logg, เบอร์: 0234445551] เป็น [ชื่อ: test2Logg test2Logg, เบอร์: 0234445551]', '2025-09-10 18:00:08'),
+(45, 3, 'admin', 'update_profile', 'แก้ไขโปรไฟล์จาก [ชื่อ: test2Logg test2Logg, เบอร์: 0234445551] เป็น [ชื่อ: test2Logg test2Logg, เบอร์: 0234445551]', '2025-09-10 18:04:17'),
+(46, 3, 'admin', 'update_profile', 'แก้ไขโปรไฟล์จาก [ชื่อ: test2Logg test2Logg, เบอร์: 0234445551] เป็น [ชื่อ: test2Logg test2Logg, เบอร์: 0234445551]', '2025-09-10 18:04:27'),
+(47, 3, 'admin', 'reset_password', 'รีเซ็ตรหัสผ่านผู้ใช้ [ID: 5, Username: Testing333] เป็นค่าเริ่มต้นใหม่', '2025-09-10 18:05:29'),
+(48, 3, 'admin', 'update_user', 'แก้ไขผู้ใช้ [ID: 5] จาก [ชื่อ: Testingg Testingg, Username: Testing333, Email: Testing333@gmail.com, เบอร์: 0123456789, Role: user] → [ชื่อ: Testingg Testingg, Username: Testing333444, Email: Testing333@gmail.com, เบอร์: 0123456789, Role: user]', '2025-09-10 18:06:11'),
+(49, 3, 'admin', 'reset_password', 'รีเซ็ตรหัสผ่านผู้ใช้ [ID: 5, Username: Testing333444] เป็นค่าเริ่มต้นใหม่', '2025-09-10 18:06:18'),
+(50, 3, 'admin', 'delete_room', 'ลบห้อง [ID: 13, ชื่อ: Luxury XL]', '2025-09-10 18:37:38'),
+(51, 3, 'admin', 'create_room', 'เพิ่มห้องใหม่', '2025-09-10 18:38:05'),
+(52, 3, 'admin', 'update_room', 'แก้ไขห้อง [ID: 14] จาก [ชื่อ: Luxury XXL, ราคา/ชม.: 3500.00, ความจุ: 10] → [ชื่อ: Luxury XXL, ราคา/ชม.: 3500.00, ความจุ: 10]', '2025-09-10 18:39:38'),
+(53, 3, 'admin', 'add_instrument_to_room', 'เพิ่มเครื่องดนตรี [Dodge] จำนวน 3 ในห้อง [ID: 14, ชื่อ: Luxury XXL]', '2025-09-10 18:40:29'),
+(54, 3, 'admin', 'add_instrument_to_room', 'เพิ่มเครื่องดนตรี [Johnson - KutchUpdate] จำนวน 3 ในห้อง [ID: 14, ชื่อ: Luxury XXL]', '2025-09-10 18:40:42'),
+(55, 3, 'admin', 'add_instrument_to_room', 'เพิ่มเครื่องดนตรี [Johnson - Kutchhh] จำนวน 3 ในห้อง [ID: 14, ชื่อ: Luxury XXL]', '2025-09-10 18:40:45'),
+(56, 3, 'admin', 'update_instrument_quantity', 'แก้ไขจำนวนเครื่องดนตรี [Johnson - KutchUpdate] ในห้อง [Luxury XXL] จาก 3 → 5', '2025-09-10 18:44:28'),
+(57, 3, 'admin', 'remove_instrument_from_room', 'ลบเครื่องดนตรี [Johnson - KutchUpdate] ออกจากห้อง [Luxury XXL]', '2025-09-10 18:44:44'),
+(58, 3, 'admin', 'add_instrument_to_room', 'เพิ่มเครื่องดนตรี [Johnson - KutchUpdate] จำนวน 5 ในห้อง [ID: 14, ชื่อ: Luxury XXL]', '2025-09-10 18:45:01'),
+(59, 3, 'admin', 'create_room', 'เพิ่มห้องใหม่', '2025-09-10 18:45:15'),
+(60, 3, 'admin', 'update_room', 'แก้ไขห้อง [ID: 15] จาก [ชื่อ: dawdw, ราคา/ชม.: 23.00, ความจุ: 23] → [ชื่อ: dawdw, ราคา/ชม.: 23.00, ความจุ: 23]', '2025-09-10 18:45:28'),
+(61, 3, 'admin', 'delete_room', 'ลบห้อง [ID: 15, ชื่อ: dawdw]', '2025-09-10 18:45:38'),
+(62, 3, 'admin', 'create_promotion', 'สร้างโปรโมชั่น [Test] (ประเภท: percent, ส่วนลด: 60)', '2025-09-10 18:52:59'),
+(63, 3, 'admin', 'update_promotion', 'แก้ไขโปรโมชั่น [Test] → [Testtttt], \n                        ส่วนลด: 60.00 → 60.00, \n                        สถานะ: Active → Inactive', '2025-09-10 18:53:34'),
+(64, 3, 'admin', 'toggle_promotion', 'สลับสถานะโปรโมชั่น [Testtttt] เป็น Active', '2025-09-10 18:53:46'),
+(65, 3, 'admin', 'toggle_promotion', 'สลับสถานะโปรโมชั่น [Testtttt] เป็น Inactive', '2025-09-10 18:53:48'),
+(66, 3, 'admin', 'toggle_promotion', 'สลับสถานะโปรโมชั่น [Testtttt] เป็น Active', '2025-09-10 18:53:50'),
+(67, 3, 'admin', 'delete_promotion', 'ลบโปรโมชั่น [Testtttt]', '2025-09-10 18:53:58'),
+(68, 3, 'admin', 'create_promotion', 'สร้างโปรโมชั่น [Ts] (ประเภท: percent, ส่วนลด: 12)', '2025-09-10 18:59:33'),
+(69, 3, 'admin', 'delete_promotion', 'ลบโปรโมชั่น [Ts]', '2025-09-10 18:59:44'),
+(70, 3, 'admin', 'create_instrument_category', 'เพิ่มประเภทเครื่องดนตรี [Wisozk Group]', '2025-09-10 19:09:17'),
+(71, 3, 'admin', 'create_instrument', 'เพิ่มเครื่องดนตรี [asdasdad] รหัส: 13124', '2025-09-10 19:09:43'),
+(72, 3, 'admin', 'create_instrument', 'เพิ่มเครื่องดนตรี [Holiday Discount] รหัส: 142535', '2025-09-10 19:10:05'),
+(73, 3, 'admin', 'create_instrument', 'เพิ่มเครื่องดนตรี [Wisozk Group] รหัส: 2222211', '2025-09-10 19:10:18'),
+(74, 3, 'admin', 'add_room_to_instrument', 'เพิ่มห้อง [A13] ให้เครื่องดนตรี [Wisozk Group] จำนวน 1', '2025-09-10 19:11:05'),
+(75, 3, 'admin', 'update_instrument_room', 'อัปเดตจำนวนเครื่องดนตรี [Wisozk Group] ในห้อง [A13] จาก 1 → 5', '2025-09-10 19:11:29'),
+(76, 3, 'admin', 'update_instrument', 'แก้ไขเครื่องดนตรี [Wisozk Group] → [Wisozk Grouppp]', '2025-09-10 19:14:12'),
+(77, 3, 'admin', 'update_instrument', 'แก้ไขเครื่องดนตรี [Wisozk Grouppp] → [Wisozk Grouppp]', '2025-09-10 19:14:33'),
+(78, 3, 'admin', 'update_instrument', 'แก้ไขเครื่องดนตรี [Holiday Discount] → [Holiday Discount]', '2025-09-10 19:15:14'),
+(79, 3, 'admin', 'delete_instrument', 'ลบเครื่องดนตรี [asdasdad] รหัส: 13124', '2025-09-10 19:15:31'),
+(80, 3, 'admin', 'delete_instrument_category', 'ลบประเภทเครื่องดนตรี [Wisozk Group] และเครื่องดนตรีทั้งหมดใน category นี้', '2025-09-10 19:15:42'),
+(81, 3, 'admin', 'create_instrument_category', 'เพิ่มประเภทเครื่องดนตรี [Wisozk Group]', '2025-09-10 19:16:14');
 
 -- --------------------------------------------------------
 
@@ -185,7 +223,8 @@ INSERT INTO `instrument_categories` (`category_id`, `name`) VALUES
 (4, 'ไวโอลิน'),
 (5, 'YippyCat'),
 (6, 'Jewery'),
-(7, 'CattyEIEI');
+(7, 'CattyEIEI'),
+(14, 'Wisozk Group');
 
 -- --------------------------------------------------------
 
@@ -313,7 +352,8 @@ CREATE TABLE `rooms` (
 INSERT INTO `rooms` (`room_id`, `name`, `price_per_hour`, `capacity`, `description`, `image_url`, `created_at`) VALUES
 (9, 'A13', 5.00, 5, 'ห้องซ้อมขนาดกลาง เก็บเสียงอย่างดี พร้อมเครื่องดนตรีครบวงจร (กลองชุด, กีตาร์, เบส, คีย์บอร์ด)', 'rooms/Se5ry9aSnIdy64WESJb6RhcF910UtwiXcFSKwbpp.png', '2025-09-04 06:12:23'),
 (11, 'A12', 12.00, 12121, 'ห้องซ้อมขนาดกลาง เก็บเสียงอย่างดี พร้อมเครื่องดนตรีครบวงจร (กลองชุด, กีตาร์, เบส, คีย์บอร์ด)', 'rooms/vIJc6z9i18dt2RaCXrKvpZ9SqTSX8h1Ymc6RbW5L.jpg', '2025-09-05 16:50:34'),
-(12, 'Studio A - Premium', 5000.00, 6, 'ห้องซ้อมขนาดกลาง เก็บเสียงอย่างดี พร้อมเครื่องดนตรีครบวงจร (กลองชุด, กีตาร์, เบส, คีย์บอร์ด)', 'rooms/8hC814xXQG6KUfeoC58hCyoh8S9zx0tERPkV9Zgk.jpg', '2025-09-08 18:18:09');
+(12, 'Studio A - Premium', 5000.00, 6, 'ห้องซ้อมขนาดกลาง เก็บเสียงอย่างดี พร้อมเครื่องดนตรีครบวงจร (กลองชุด, กีตาร์, เบส, คีย์บอร์ด)', 'rooms/8hC814xXQG6KUfeoC58hCyoh8S9zx0tERPkV9Zgk.jpg', '2025-09-08 18:18:09'),
+(14, 'Luxury XXL', 3500.00, 10, 'ห้องซ้อมขนาดกลาง เก็บเสียงอย่างดี พร้อมเครื่องดนตรีครบวงจร (กลองชุด, กีตาร์, เบส, คีย์บอร์ด)', 'rooms/UWxG0x75nG0h0O1nUp8SjTSOXm7QpmXGa9umufJH.png', '2025-09-10 18:38:05');
 
 -- --------------------------------------------------------
 
@@ -334,7 +374,10 @@ CREATE TABLE `room_instruments` (
 INSERT INTO `room_instruments` (`room_id`, `instrument_id`, `quantity`) VALUES
 (9, 2, 3),
 (9, 4, 1111),
-(9, 7, 6);
+(9, 7, 6),
+(14, 2, 3),
+(14, 4, 5),
+(14, 7, 3);
 
 -- --------------------------------------------------------
 
@@ -362,9 +405,9 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`user_id`, `firstname`, `lastname`, `username`, `email`, `password_hash`, `phone`, `role`, `created_at`, `updated_at`) VALUES
 (1, 'ssdUpdated', 'RazorUpdated', 'ssd', 'ssd@gmail.com', '$2y$12$CC0qPkH/dXQyMJZXsy7.j.geXF/.eyZOSW.Mhi2xMiGLt6JufNS2K', '0000000000', 'user', '2025-08-28 08:15:50', '2025-08-30 18:42:45'),
 (2, 'AdminUpdated', 'AdminnaUpdated', 'admin', 'admin@gmail.com', '$2y$12$qWLk1jgW9AmYTDegQLnTx.gF4LrmSp/J3LalWgd4oS.vqJuR061Qe', '0123456789', 'admin', '2025-08-28 09:22:19', '2025-08-30 18:43:28'),
-(3, 'test2UpdateUser1', 'test2UpdateUser1', 'test2', 'test2@gmail.com', '$2y$12$u0Tc4T6MzHLfLJamNqcepu84ex2PImFPr/vzxujZ9t9yqIwD/kMoK', '0234445555', 'admin', '2025-08-28 09:23:38', '2025-09-02 11:03:42'),
+(3, 'test2Logg', 'test2Logg', 'test2', 'test2@gmail.com', '$2y$12$u0Tc4T6MzHLfLJamNqcepu84ex2PImFPr/vzxujZ9t9yqIwD/kMoK', '0234445551', 'admin', '2025-08-28 09:23:38', '2025-09-10 17:58:33'),
 (4, 'Testing', 'Testing', 'Testing123', 'Testing123@gmail.com', '$2y$12$ICZPZbpajdvYCQLTFbHkwufsU9jpPf56V6LfQRu50QXy3yEl.Rw.m', '0222222222', 'user', '2025-09-05 16:58:24', '2025-09-05 16:58:24'),
-(5, 'Testingg', 'Testingg', 'Testing333', 'Testing333@gmail.com', '$2y$12$T9cUl0VeCwCIZmrS8gR6x.eWtfvHWqHBWn5iGZEVT0IeINR3akgI.', '0123456789', 'user', '2025-09-05 16:59:11', '2025-09-05 16:59:11'),
+(5, 'Testingg', 'Testingg', 'Testing333444', 'Testing333@gmail.com', '$2y$12$dUd9BlUtBaJYiV9Yog2VAuVPJs209CxHz.w4NmerNM/jA4ZjukK86', '0123456789', 'user', '2025-09-05 16:59:11', '2025-09-10 18:06:18'),
 (6, 'News', 'Looks', 'Newlookauth3', 'Newlookauth3@gmail.com', '$2y$12$UUwnROXyy9ydejCsTnc7pecOf6nzDsCD16/lrT3LfLOBmvYTkayQ6', '0812345678', 'user', '2025-09-09 06:35:11', '2025-09-10 17:40:33');
 
 --
@@ -465,7 +508,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
 
 --
 -- AUTO_INCREMENT for table `bookings`
@@ -477,13 +520,13 @@ ALTER TABLE `bookings`
 -- AUTO_INCREMENT for table `instruments`
 --
 ALTER TABLE `instruments`
-  MODIFY `instrument_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `instrument_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `instrument_categories`
 --
 ALTER TABLE `instrument_categories`
-  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `password_resets`
@@ -501,7 +544,7 @@ ALTER TABLE `payments`
 -- AUTO_INCREMENT for table `promotions`
 --
 ALTER TABLE `promotions`
-  MODIFY `promo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `promo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `receipts`
@@ -513,7 +556,7 @@ ALTER TABLE `receipts`
 -- AUTO_INCREMENT for table `rooms`
 --
 ALTER TABLE `rooms`
-  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `users`

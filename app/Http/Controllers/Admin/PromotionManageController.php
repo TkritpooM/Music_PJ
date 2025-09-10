@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\ActivityLog;
 use App\Models\Promotion;
 
 class PromotionManageController extends Controller
@@ -52,7 +54,7 @@ class PromotionManageController extends Controller
             'end_date.after_or_equal' => 'วันสิ้นสุดต้องไม่ก่อนวันเริ่มต้น',
         ]);
 
-        Promotion::create([
+        $promotion = Promotion::create([
             'name' => $request->name,
             'description' => $request->description,
             'discount_type' => $request->discount_type,
@@ -60,6 +62,14 @@ class PromotionManageController extends Controller
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
             'is_active' => true,
+        ]);
+
+        // บันทึก Activity Log
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'role' => 'admin',
+            'action_type' => 'create_promotion',
+            'details' => "สร้างโปรโมชั่น [{$promotion->name}] (ประเภท: {$promotion->discount_type}, ส่วนลด: {$promotion->discount_value})",
         ]);
 
         return redirect()->route('admin.promotions')->with('success', 'เพิ่มโปรโมชั่นเรียบร้อยแล้ว');
@@ -74,6 +84,7 @@ class PromotionManageController extends Controller
     public function updatePromotion(Request $request, $id)
     {
         $promotion = Promotion::findOrFail($id);
+        $oldData = $promotion->toArray();
 
         $request->validate([
             'name' => 'required|string|max:100|unique:promotions,name,' . $id . ',promo_id',
@@ -117,13 +128,32 @@ class PromotionManageController extends Controller
             'is_active' => $request->has('is_active') ? 1 : 0,
         ]);
 
+        // บันทึก Activity Log
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'role' => 'admin',
+            'action_type' => 'update_promotion',
+            'details' => "แก้ไขโปรโมชั่น [{$oldData['name']}] → [{$promotion->name}], 
+                        ส่วนลด: {$oldData['discount_value']} → {$promotion->discount_value}, 
+                        สถานะ: " . ($oldData['is_active'] ? 'Active' : 'Inactive') . " → " . ($promotion->is_active ? 'Active' : 'Inactive'),
+        ]);
+
         return redirect()->route('admin.promotions')->with('success', 'แก้ไขโปรโมชั่นเรียบร้อยแล้ว');
     }
 
     public function deletePromotion($id)
     {
         $promotion = Promotion::findOrFail($id);
+        $name = $promotion->name;
         $promotion->delete();
+
+        // บันทึก Activity Log
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'role' => 'admin',
+            'action_type' => 'delete_promotion',
+            'details' => "ลบโปรโมชั่น [{$name}]",
+        ]);
 
         return redirect()->route('admin.promotions')->with('success', 'ลบโปรโมชั่นเรียบร้อยแล้ว');
     }
@@ -133,6 +163,14 @@ class PromotionManageController extends Controller
         $promotion = Promotion::findOrFail($id);
         $promotion->is_active = !$promotion->is_active;
         $promotion->save();
+
+        // บันทึก Activity Log
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'role' => 'admin',
+            'action_type' => 'toggle_promotion',
+            'details' => "สลับสถานะโปรโมชั่น [{$promotion->name}] เป็น " . ($promotion->is_active ? 'Active' : 'Inactive'),
+        ]);
 
         return redirect()->route('admin.promotions')->with('success', 'อัปเดตสถานะโปรโมชั่นเรียบร้อยแล้ว');
     }

@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
             
 class LogManageController extends Controller
 {
-   public function log()
+    public function log()
     {
-        // เรียกไฟล์ view/admin/log.blade.php
-        return view('admin.logManage.log');
+        $logs = ActivityLog::with('user')->orderBy('created_at', 'desc')->paginate(10);
+        return view('admin.logManage.log', compact('logs'));
     }
 }
