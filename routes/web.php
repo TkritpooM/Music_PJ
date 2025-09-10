@@ -123,4 +123,8 @@ Route::middleware(['auth'])->group(function() {
     // ----------------------------- ฺConfirm Payment ----------------------------- //
     Route::post('/user/room/{room}/confirm-payment', [BookingController::class, 'confirmPayment'])->name('user.room.confirmPayment');
 
+    // ----------------------------- ฺReceipt ----------------------------- //
+    Route::get('/user/room/{booking}/receipt', [BookingController::class, 'showReceipt'])->name('user.room.receipt');
+    Route::get('/user/room/{booking}/receipt/pdf', [BookingController::class, 'exportReceiptPDF'])->name('user.room.receipt.pdf');
+
 });

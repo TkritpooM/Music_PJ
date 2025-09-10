@@ -10,7 +10,7 @@
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg"
-        style="background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);">
+        style="background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 1030;">
         <div class="container">
             <a class="navbar-brand fw-bold text-white" href="{{ route('user.home') }}">
                 Music Studio

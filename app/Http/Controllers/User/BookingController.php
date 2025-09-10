@@ -13,6 +13,7 @@ use App\Models\Instrument;
 use App\Models\Payment;
 use App\Models\Receipt;
 use App\Models\BookingAddon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class BookingController extends Controller
 {
@@ -346,9 +347,53 @@ class BookingController extends Controller
             'details' => "Booking #".str_pad($booking->booking_id,5,'0',STR_PAD_LEFT)." confirmed via QR Code"
         ]);
 
-        return redirect()->route('user.bookings')->with('success', 'Booking confirmed successfully!');
+        // return redirect()->route('user.bookings')->with('success', 'Booking confirmed successfully!');
+        return redirect()->route('user.room.receipt', $booking->booking_id)->with('success', 'Payment confirmed successfully!');
     }
 
     // ---------------------------------- Receipt ----------------------------------- //
+    public function showReceipt(Booking $booking)
+    {
+        // ตรวจสอบสิทธิ์ user
+        if ($booking->user_id !== auth()->id() && auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+
+        // ดึงข้อมูล Payment
+        $payment = $booking->payment()->first();
+
+        // ดึง Add-ons
+        $addons = $booking->addons()->with('instrument')->get();
+
+        // ดึง Receipt หรือสร้างใหม่ถ้ายังไม่มี
+        $receipt = $booking->receipt()->first();
+        if (!$receipt) {
+            $receipt_number = 'R'.str_pad($booking->booking_id, 5, '0', STR_PAD_LEFT).time();
+            $receipt = \App\Models\Receipt::create([
+                'booking_id' => $booking->booking_id,
+                'receipt_number' => $receipt_number,
+                'full_amount' => $booking->total_price,
+                'deposit_amount' => $booking->deposit_price,
+                'discount_amount' => $booking->promo?->discount_value ?? 0,
+            ]);
+        }
+
+        return view('user.receipt', compact('booking', 'payment', 'addons', 'receipt'));
+    }
+
+    // สำหรับ Export PDF
+    public function exportReceiptPDF(Booking $booking)
+    {
+        if ($booking->user_id !== auth()->id() && auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+
+        $payment = $booking->payment()->first();
+        $addons = $booking->addons()->with('instrument')->get();
+        $receipt = $booking->receipt()->first();
+
+        $pdf = Pdf::loadView('user.receipt_pdf', compact('booking', 'payment', 'addons', 'receipt'));
+        return $pdf->download("Receipt_{$receipt->receipt_number}.pdf");
+    }
 
 }
