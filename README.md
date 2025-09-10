@@ -25,7 +25,7 @@ Open terminal in your `htdocs` (or local server directory) and run:
 
 2. **Update `.env` file**  
    Configure your database and session settings:
-
+   ```
     DB_CONNECTION=mysql       # Change from sqlite to mysql or others
     DB_HOST=127.0.0.1
     DB_PORT=3306
@@ -38,7 +38,7 @@ Open terminal in your `htdocs` (or local server directory) and run:
     SESSION_ENCRYPT=false
     SESSION_PATH=/
     SESSION_DOMAIN=null
-
+   ```
 ---
 
 ## 🏃‍♂️ Run Project

@@ -18,6 +18,11 @@ class Room extends Model
 
     public $timestamps = false;
 
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class, 'room_id', 'room_id');
+    }
+
     public function instruments()
     {
         return $this->belongsToMany(Instrument::class, 'room_instruments', 'room_id', 'instrument_id')

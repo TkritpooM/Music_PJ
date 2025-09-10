@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 09, 2025 at 08:48 AM
+-- Generation Time: Sep 10, 2025 at 06:53 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -36,6 +36,26 @@ CREATE TABLE `activity_logs` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `activity_logs`
+--
+
+INSERT INTO `activity_logs` (`log_id`, `user_id`, `role`, `action_type`, `details`, `created_at`) VALUES
+(1, 6, 'user', 'confirm_payment', 'Booking #00069 confirmed via QR Code', '2025-09-09 19:06:48'),
+(2, 6, 'user', 'cancel_booking', 'ยกเลิกการจอง #66 คืนเงิน 50%', '2025-09-09 19:18:50'),
+(3, 6, 'user', 'cancel_booking', 'ยกเลิกการจอง #68 คืนเงิน 50%', '2025-09-09 19:25:28'),
+(4, 6, 'user', 'cancel_booking', 'ยกเลิกการจอง #67 คืนเงิน 50%', '2025-09-09 19:25:30'),
+(5, 6, 'user', 'confirm_payment', 'Booking #00070 confirmed via QR Code', '2025-09-09 19:28:19'),
+(6, 6, 'user', 'confirm_payment', 'Booking #00071 confirmed via QR Code', '2025-09-09 19:31:45'),
+(7, 6, 'user', 'confirm_payment', 'Booking #00072 confirmed via QR Code', '2025-09-10 03:34:26'),
+(8, 6, 'user', 'confirm_payment', 'Booking #00073 confirmed via QR Code', '2025-09-10 04:26:11'),
+(9, 6, 'user', 'cancel_booking', 'ยกเลิกการจอง #70 คืนเงิน 50%', '2025-09-10 04:28:22'),
+(10, 6, 'user', 'cancel_booking', 'ยกเลิกการจอง #71 คืนเงิน 50%', '2025-09-10 04:28:23'),
+(11, 6, 'user', 'cancel_booking', 'ยกเลิกการจอง #72 คืนเงิน 50%', '2025-09-10 04:28:25'),
+(12, 6, 'user', 'cancel_booking', 'ยกเลิกการจอง #69 คืนเงิน 50%', '2025-09-10 04:28:27'),
+(13, 6, 'user', 'confirm_payment', 'Booking #00074 confirmed via QR Code', '2025-09-10 04:40:10'),
+(14, 6, 'user', 'confirm_payment', 'Booking #00075 confirmed via QR Code', '2025-09-10 04:43:04');
+
 -- --------------------------------------------------------
 
 --
@@ -56,6 +76,22 @@ CREATE TABLE `bookings` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `bookings`
+--
+
+INSERT INTO `bookings` (`booking_id`, `user_id`, `room_id`, `promo_id`, `start_time`, `end_time`, `total_price`, `deposit_price`, `status`, `created_at`, `updated_at`) VALUES
+(66, 6, 12, NULL, '2025-09-10 01:51:00', '2025-09-10 03:51:00', 10978.00, 5489.00, 'cancelled', '2025-09-09 18:59:22', '2025-09-09 19:18:50'),
+(67, 6, 12, NULL, '2025-09-10 01:52:00', '2025-09-10 03:51:00', 10978.00, 5489.00, 'cancelled', '2025-09-09 19:03:36', '2025-09-09 19:25:30'),
+(68, 6, 12, NULL, '2025-09-10 01:52:00', '2025-09-10 03:51:00', 10978.00, 5489.00, 'cancelled', '2025-09-09 19:05:24', '2025-09-09 19:25:28'),
+(69, 6, 12, NULL, '2025-09-10 01:51:00', '2025-09-10 03:51:00', 10978.00, 5489.00, 'cancelled', '2025-09-09 19:06:48', '2025-09-10 04:28:27'),
+(70, 6, 12, NULL, '2025-09-10 06:27:00', '2025-09-10 10:27:00', 25078.00, 12539.00, 'cancelled', '2025-09-09 19:28:19', '2025-09-10 04:28:21'),
+(71, 6, 12, NULL, '2025-09-10 11:31:00', '2025-09-10 13:31:00', 12378.00, 6189.00, 'cancelled', '2025-09-09 19:31:45', '2025-09-10 04:28:23'),
+(72, 6, 12, NULL, '2025-09-10 15:33:00', '2025-09-10 16:33:00', 7678.00, 3839.00, 'cancelled', '2025-09-10 03:34:26', '2025-09-10 04:28:25'),
+(73, 6, 12, NULL, '2025-09-11 10:50:00', '2025-09-11 11:50:00', 6878.00, 3439.00, 'confirmed', '2025-09-10 04:26:11', '2025-09-10 04:26:11'),
+(74, 6, 12, NULL, '2025-09-10 15:30:00', '2025-09-10 16:30:00', 6178.00, 3089.00, 'confirmed', '2025-09-10 04:40:10', '2025-09-10 04:51:34'),
+(75, 6, 12, NULL, '2025-09-10 17:41:00', '2025-09-10 18:41:00', 15278.00, 7639.00, 'confirmed', '2025-09-10 04:43:04', '2025-09-10 04:43:04');
+
 -- --------------------------------------------------------
 
 --
@@ -68,6 +104,18 @@ CREATE TABLE `booking_addons` (
   `quantity` int(11) DEFAULT 1,
   `price` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `booking_addons`
+--
+
+INSERT INTO `booking_addons` (`booking_id`, `instrument_id`, `quantity`, `price`) VALUES
+(73, 2, 3, 100.00),
+(73, 7, 6, 300.00),
+(74, 2, 2, 100.00),
+(74, 7, 4, 300.00),
+(75, 2, 12, 100.00),
+(75, 7, 31, 300.00);
 
 -- --------------------------------------------------------
 
@@ -82,17 +130,18 @@ CREATE TABLE `instruments` (
   `name` varchar(100) NOT NULL,
   `brand` varchar(100) DEFAULT NULL,
   `picture_url` varchar(255) DEFAULT NULL,
-  `status` enum('available','unavailable','maintenance') DEFAULT 'available'
+  `status` enum('available','unavailable','maintenance') DEFAULT 'available',
+  `price_per_unit` decimal(10,2) NOT NULL DEFAULT 0.00
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `instruments`
 --
 
-INSERT INTO `instruments` (`instrument_id`, `category_id`, `code`, `name`, `brand`, `picture_url`, `status`) VALUES
-(2, 5, '22222', 'Dodge', 'D33', 'instruments/YNkHVTdaAdapPH6wiNWb3TTZEwDifzvZvMbU5HRD.jpg', 'available'),
-(4, 6, '22233', 'Johnson - KutchUpdate', 'JW1122', 'instruments/0dYbMvBfFkfXSp510Lb7A7xl2vELzKPqrVa0dMKJ.png', 'unavailable'),
-(7, 7, '12445', 'Johnson - Kutchhh', 'JW1122', 'instruments/sZvk9NdrIsnU1ERS4x5sAAjlC7M9NzPNYezZQd2a.jpg', 'available');
+INSERT INTO `instruments` (`instrument_id`, `category_id`, `code`, `name`, `brand`, `picture_url`, `status`, `price_per_unit`) VALUES
+(2, 5, '22222', 'Dodge', 'D33', 'instruments/YNkHVTdaAdapPH6wiNWb3TTZEwDifzvZvMbU5HRD.jpg', 'available', 100.00),
+(4, 6, '22233', 'Johnson - KutchUpdate', 'JW1122', 'instruments/0dYbMvBfFkfXSp510Lb7A7xl2vELzKPqrVa0dMKJ.png', 'unavailable', 200.00),
+(7, 7, '12445', 'Johnson - Kutchhh', 'JW1122', 'instruments/sZvk9NdrIsnU1ERS4x5sAAjlC7M9NzPNYezZQd2a.jpg', 'available', 300.00);
 
 -- --------------------------------------------------------
 
@@ -159,6 +208,20 @@ CREATE TABLE `payments` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `payments`
+--
+
+INSERT INTO `payments` (`payment_id`, `booking_id`, `amount`, `payment_method`, `payment_status`, `transaction_id`, `paid_at`, `created_at`) VALUES
+(1, 68, 5489.00, 'qr_code', 'paid', 'TXN1757444724', '2025-09-10 02:05:24', '2025-09-09 19:05:24'),
+(2, 69, 5489.00, 'qr_code', 'paid', 'TXN1757444808', '2025-09-10 02:06:48', '2025-09-09 19:06:48'),
+(3, 70, 12539.00, 'qr_code', 'paid', 'TXN1757446099', '2025-09-10 02:28:19', '2025-09-09 19:28:19'),
+(4, 71, 6189.00, 'qr_code', 'paid', 'TXN1757446305', '2025-09-10 02:31:45', '2025-09-09 19:31:45'),
+(5, 72, 3839.00, 'qr_code', 'paid', 'TXN1757475266', '2025-09-10 10:34:26', '2025-09-10 03:34:26'),
+(6, 73, 3439.00, 'qr_code', 'paid', 'TXN1757478371', '2025-09-10 11:26:11', '2025-09-10 04:26:11'),
+(7, 74, 3089.00, 'qr_code', 'paid', 'TXN1757479210', '2025-09-10 11:40:10', '2025-09-10 04:40:10'),
+(8, 75, 7639.00, 'qr_code', 'paid', 'TXN1757479384', '2025-09-10 11:43:04', '2025-09-10 04:43:04');
+
 -- --------------------------------------------------------
 
 --
@@ -201,6 +264,20 @@ CREATE TABLE `receipts` (
   `discount_amount` decimal(10,2) DEFAULT 0.00,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `receipts`
+--
+
+INSERT INTO `receipts` (`receipt_id`, `booking_id`, `receipt_number`, `full_amount`, `deposit_amount`, `discount_amount`, `created_at`) VALUES
+(1, 68, '00068', 10978.00, 5489.00, 0.00, '2025-09-09 19:05:24'),
+(2, 69, '00069', 10978.00, 5489.00, 0.00, '2025-09-09 19:06:48'),
+(3, 70, '00070', 25078.00, 12539.00, 0.00, '2025-09-09 19:28:19'),
+(4, 71, '00071', 12378.00, 6189.00, 0.00, '2025-09-09 19:31:45'),
+(5, 72, '00072', 7678.00, 3839.00, 0.00, '2025-09-10 03:34:26'),
+(6, 73, '00073', 6878.00, 3439.00, 0.00, '2025-09-10 04:26:11'),
+(7, 74, '00074', 6178.00, 3089.00, 0.00, '2025-09-10 04:40:10'),
+(8, 75, '00075', 15278.00, 7639.00, 0.00, '2025-09-10 04:43:04');
 
 -- --------------------------------------------------------
 
@@ -277,7 +354,7 @@ INSERT INTO `users` (`user_id`, `firstname`, `lastname`, `username`, `email`, `p
 (3, 'test2UpdateUser1', 'test2UpdateUser1', 'test2', 'test2@gmail.com', '$2y$12$u0Tc4T6MzHLfLJamNqcepu84ex2PImFPr/vzxujZ9t9yqIwD/kMoK', '0234445555', 'admin', '2025-08-28 09:23:38', '2025-09-02 11:03:42'),
 (4, 'Testing', 'Testing', 'Testing123', 'Testing123@gmail.com', '$2y$12$ICZPZbpajdvYCQLTFbHkwufsU9jpPf56V6LfQRu50QXy3yEl.Rw.m', '0222222222', 'user', '2025-09-05 16:58:24', '2025-09-05 16:58:24'),
 (5, 'Testingg', 'Testingg', 'Testing333', 'Testing333@gmail.com', '$2y$12$T9cUl0VeCwCIZmrS8gR6x.eWtfvHWqHBWn5iGZEVT0IeINR3akgI.', '0123456789', 'user', '2025-09-05 16:59:11', '2025-09-05 16:59:11'),
-(6, 'New', 'Looks', 'Newlookauth3', 'Newlookauth3@gmail.com', '$2y$12$VUWXJ0DJl/Pfzf2vGLBtgu5gJd4G1wpFGteVr7.tJ9syQCfEV9WEC', '0812345678', 'user', '2025-09-09 06:35:11', '2025-09-09 06:36:36');
+(6, 'New', 'Looks', 'Newlookauth3', 'Newlookauth3@gmail.com', '$2y$12$UUwnROXyy9ydejCsTnc7pecOf6nzDsCD16/lrT3LfLOBmvYTkayQ6', '0812345678', 'user', '2025-09-09 06:35:11', '2025-09-09 07:17:09');
 
 --
 -- Indexes for dumped tables
@@ -377,13 +454,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
 -- AUTO_INCREMENT for table `instruments`
@@ -407,7 +484,7 @@ ALTER TABLE `password_resets`
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `promotions`
@@ -419,7 +496,7 @@ ALTER TABLE `promotions`
 -- AUTO_INCREMENT for table `receipts`
 --
 ALTER TABLE `receipts`
-  MODIFY `receipt_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `receipt_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `rooms`

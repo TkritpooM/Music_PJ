@@ -1,18 +1,58 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Room;
+use App\Models\Promotion;
+use App\Models\ActivityLog;
 
 class UserController extends Controller
 {
-    public function home()
+    public function home(Request $request)
     {
-        // เรียกไฟล์ view/user/home.blade.php
-        return view('user.home');
+        // ดึงโปรโมชั่นที่ยัง active
+        $promotions = Promotion::where('is_active', true)
+            ->whereDate('start_date', '<=', now())
+            ->whereDate('end_date', '>=', now())
+            ->get();
+
+        // Query ห้อง
+        $query = Room::with('instruments');
+
+        // Search
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        // Filter ตาม capacity
+        if ($request->filled('capacity')) {
+            $query->where('capacity', '>=', $request->capacity);
+        }
+
+        // Filter ตามราคา
+        if ($request->filled('min_price')) {
+            $query->where('price_per_hour', '>=', $request->min_price);
+        }
+        if ($request->filled('max_price')) {
+            $query->where('price_per_hour', '<=', $request->max_price);
+        }
+
+        // Filter ตามอุปกรณ์
+        if ($request->filled('instrument_ids')) {
+            $instrumentIds = $request->instrument_ids;
+            $query->whereHas('instruments', function($q) use ($instrumentIds) {
+                $q->whereIn('instrument_id', $instrumentIds);
+            });
+        }
+
+        $rooms = $query->get();
+
+        return view('user.home', compact('promotions', 'rooms'));
     }
 
     // แสดงหน้า edit profile
@@ -50,6 +90,14 @@ class UserController extends Controller
         $user->phone     = $request->phone;
         /** @var User $user */
         $user->save();
+
+        // บันทึก Log
+        ActivityLog::create([
+            'user_id' => $user->user_id,
+            'role' => 'user',
+            'action_type' => 'update_profile',
+            'details' => 'User updated profile information',
+        ]);
 
         return redirect()->back()->with('success', 'แก้ไขข้อมูลเรียบร้อยแล้ว');
     }

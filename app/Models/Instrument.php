@@ -10,7 +10,12 @@ class Instrument extends Model
     protected $primaryKey = 'instrument_id';
     public $timestamps = false;
 
-    protected $fillable = ['category_id','code','name','brand','picture_url','status'];
+    protected $fillable = ['category_id','code','name','brand','picture_url','status','price_per_unit'];
+
+    public function getPriceAttribute()
+    {
+        return $this->price_per_unit;
+    }
 
     public function category()
     {

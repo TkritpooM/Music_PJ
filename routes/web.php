@@ -11,8 +11,9 @@ use App\Http\Controllers\Admin\InstrumentManageController;
 use App\Http\Controllers\Admin\LogManageController;
 use App\Http\Controllers\Admin\ProfileManageController;
 
+use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\User\BookingController;
 
-use App\Http\Controllers\UserController;
 
 // ----------------------------- Guest Section ----------------------------- //
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -30,6 +31,7 @@ Route::get('/reset-password/{token}', [AuthController::class, 'resetPasswordForm
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 Route::middleware(['auth'])->group(function() {
+
     // ----------------------------- Admin Section ----------------------------- //
 
     // ----------------------------- Dashboard ----------------------------- //
@@ -76,7 +78,7 @@ Route::middleware(['auth'])->group(function() {
     Route::post('/instruments/{instrument}/rooms/{room}/update', [InstrumentManageController::class, 'updateInstrumentRoom'])->name('admin.instruments.updateRoom');
     Route::delete('/instruments/{instrument}/rooms/{room}/detach', [InstrumentManageController::class, 'detachRoom'])->name('admin.instruments.detachRoom');
 
-    // ----------------------------- Profile ----------------------------- //
+    // ----------------------------- Admmin Profile ----------------------------- //
     Route::get('/profile', [ProfileManageController::class, 'editProfile'])->name('admin.profile.edit');
     Route::post('/profile', [ProfileManageController::class, 'updateProfile'])->name('admin.profile.update');
 
@@ -84,11 +86,41 @@ Route::middleware(['auth'])->group(function() {
     Route::get('/log', [LogManageController::class, 'log'])->name('admin.log');
 
 
+
+
+
+
     // ----------------------------- User Section ----------------------------- //
-    // User Home
+
+    // ----------------------------- User Home ----------------------------- //
     Route::get('/user/home', [UserController::class, 'home'])->name('user.home');
 
-    // Profile (แก้ไขข้อมูลผู้ใช้)
+    // ----------------------------- User Profile ----------------------------- //
     Route::get('/user/profile', [UserController::class, 'editProfile'])->name('user.profile.edit');
     Route::post('/user/profile', [UserController::class, 'updateProfile'])->name('user.profile.update');
+
+    // ----------------------------- ฺBooking History ----------------------------- //
+    Route::get('/user/my-bookings', [BookingController::class, 'index'])->name('user.bookings');
+    Route::get('/user/my-bookings/{booking}/edit', [BookingController::class, 'edit'])->name('user.bookings.edit');
+    Route::put('/bookings/{booking}', [BookingController::class, 'update'])->name('user.bookings.update');
+    Route::post('/user/my-bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('user.bookings.cancel');
+
+
+
+
+    // ----------------------------- ฺRoom Info ----------------------------- //
+    Route::get('/user/room/{room}', [BookingController::class, 'roomInfo'])->name('user.roominfo');
+    Route::post('/user/room/{room}/check-availability', [BookingController::class, 'checkAvailability'])->name('user.room.checkAvailability');
+
+    // ----------------------------- ฺRoom AddOn ----------------------------- //
+    Route::get('/user/room/{room}/addons', [BookingController::class, 'roomAddon'])->name('user.room.addons');
+    Route::post('/user/room/{room}/addons/calculate', [BookingController::class, 'calculateAddon'])->name('user.room.addons.calculate');
+
+    // ----------------------------- ฺPayment ----------------------------- //
+    Route::get('/room/{room}/payment', [BookingController::class, 'payment'])->name('user.room.payment');
+    Route::post('/user/room/{room}/qrcode', [BookingController::class, 'showQRCode'])->name('user.room.qrcode');
+
+    // ----------------------------- ฺConfirm Payment ----------------------------- //
+    Route::post('/user/room/{room}/confirm-payment', [BookingController::class, 'confirmPayment'])->name('user.room.confirmPayment');
+
 });
