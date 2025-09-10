@@ -6,6 +6,20 @@
     <title>@yield('title') | Music Studio</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        /* Sticky Footer */
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+        main {
+            flex: 1;
+        }
+    </style>
 </head>
 <body>
     <!-- Navbar -->
@@ -57,12 +71,12 @@
     </nav>
 
     <!-- Main Content -->
-    <div class="container mt-5">
+    <main class="container mt-5">
         @yield('content')
-    </div>
+    </main>
 
     <!-- Footer -->
-    <footer class="py-4 text-white text-center mt-5"
+    <footer class="py-4 text-white text-center"
             style="background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);">
         <div class="container">
             <h5 class="fw-bold mb-2">Music Studio</h5>

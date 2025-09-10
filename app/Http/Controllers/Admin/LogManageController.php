@@ -9,6 +9,6 @@ class LogManageController extends Controller
    public function log()
     {
         // เรียกไฟล์ view/admin/log.blade.php
-        return view('admin.log');
+        return view('admin.logManage.log');
     }
 }

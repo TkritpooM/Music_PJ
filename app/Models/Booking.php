@@ -63,18 +63,6 @@ class Booking extends Model
         return $this->hasMany(BookingAddon::class, 'booking_id');
     }
 
-    // // Relationship กับ Booking
-    // public function booking()
-    // {
-    //     return $this->belongsTo(Booking::class, 'booking_id', 'booking_id');
-    // }
-
-    // // Relationship กับ Instrument
-    // public function instrument()
-    // {
-    //     return $this->belongsTo(Instrument::class, 'instrument_id', 'instrument_id');
-    // }
-
     // Relationship กับ Payment (1 booking มี 1 payment)
     public function payment()
     {

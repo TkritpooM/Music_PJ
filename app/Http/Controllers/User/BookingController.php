@@ -98,6 +98,34 @@ class BookingController extends Controller
         return redirect()->route('user.bookings')->with('success', 'Booking cancelled successfully.');
     }
 
+    public function destroy(Booking $booking)
+    {
+        if ($booking->user_id !== auth()->id() && auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+
+        // เก็บ booking_id ไว้ใช้ใน log ก่อนลบ
+        $bookingId = $booking->booking_id;
+
+        // ลบข้อมูลที่เกี่ยวข้อง
+        BookingAddon::where('booking_id', $bookingId)->delete();
+        Payment::where('booking_id', $bookingId)->delete();
+        Receipt::where('booking_id', $bookingId)->delete();
+
+        // ลบ booking
+        $booking->delete();
+
+        // Log activity
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'role' => auth()->user()->role,
+            'action_type' => 'delete_booking',
+            'details' => "ลบการจอง #{$bookingId} และข้อมูลที่เกี่ยวข้องทั้งหมด",
+        ]);
+
+        return redirect()->route('user.bookings')->with('success', 'Booking deleted successfully.');
+    }
+
     // ---------------------------------- Rooms Info ----------------------------------- //
     public function roomInfo(Room $room)
     {

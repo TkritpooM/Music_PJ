@@ -80,7 +80,7 @@ function updatePrice() {
     .then(data => {
         document.getElementById('priceResult').innerHTML = `
             <p>Add-on Total: ${data.addon_total} ฿</p>
-            <p><strong>Final Total: ${data.final_total} ฿</strong></p>
+            <p><strong>Final Total: ${Number(data.final_total).toFixed(2)} ฿</strong></p>
         `;
     });
 }

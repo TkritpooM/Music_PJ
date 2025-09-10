@@ -32,7 +32,9 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 Route::middleware(['auth'])->group(function() {
 
+    // ------------------------------------------------------------------------- //
     // ----------------------------- Admin Section ----------------------------- //
+    // ------------------------------------------------------------------------- //
 
     // ----------------------------- Dashboard ----------------------------- //
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
@@ -89,8 +91,9 @@ Route::middleware(['auth'])->group(function() {
 
 
 
-
+    // ------------------------------------------------------------------------ //
     // ----------------------------- User Section ----------------------------- //
+    // ------------------------------------------------------------------------ //
 
     // ----------------------------- User Home ----------------------------- //
     Route::get('/user/home', [UserController::class, 'home'])->name('user.home');
@@ -104,9 +107,7 @@ Route::middleware(['auth'])->group(function() {
     Route::get('/user/my-bookings/{booking}/edit', [BookingController::class, 'edit'])->name('user.bookings.edit');
     Route::put('/bookings/{booking}', [BookingController::class, 'update'])->name('user.bookings.update');
     Route::post('/user/my-bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('user.bookings.cancel');
-
-
-
+    Route::delete('/bookings/{booking}', [BookingController::class, 'destroy'])->name('user.bookings.destroy');
 
     // ----------------------------- ฺRoom Info ----------------------------- //
     Route::get('/user/room/{room}', [BookingController::class, 'roomInfo'])->name('user.roominfo');

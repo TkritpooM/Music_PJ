@@ -56,8 +56,8 @@ document.getElementById('checkBtn').addEventListener('click', function() {
             document.getElementById('priceResult').innerHTML = `
                 <p>Hours: ${data.hours}</p>
                 <p>Price: ${data.price} ฿</p>
-                <p>Discount: ${data.discount} ฿</p>
-                <p><strong>Total: ${data.total} ฿</strong></p>
+                <p>Discount: ${data.discount.toFixed(2)} ฿</p>
+                <p><strong>Total: ${data.total.toFixed(2)} ฿</strong></p>
                 <a href="{{ route('user.room.addons', $room->room_id) }}?hours=${data.hours}&total=${data.total}&start_time=${form.start_time.value}&end_time=${form.end_time.value}" class="btn btn-success mt-2">Next → Add-ons</a>
             `;
         }
