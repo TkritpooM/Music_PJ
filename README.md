@@ -58,8 +58,8 @@ Access your project at:
 
 ### 👤 User Accounts
 - `ssd` — **ssd@gmail.com** — `ssdresetupdate12345Test`  
-- `Testing123` — **Testing123@gmail.com** — `Testing123ggg`  
-- `Testing333` — **Testing333@gmail.com** — `Testing333ggg`
+- `Testing123new` — **Testing123@gmail.com** — `12345678`  
+- `Testing333444` — **Testing333@gmail.com** — `12345678`
 - `Newlookauth3` — **Newlookauth3@gmail.com** — `Newlookauth3cyreneNewlookauth3cyrene`
 
 ### 🛠 Admin Accounts
