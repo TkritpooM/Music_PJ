@@ -104,6 +104,7 @@ class InstrumentManageController extends Controller
             'brand' => 'nullable|string|max:100',
             'picture_url' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
             'status' => 'required|in:available,unavailable,maintenance',
+            'price_per_unit' => 'required|numeric|min:0',
         ], [
             'category_id.required' => 'กรุณาเลือกประเภทเครื่องดนตรี',
             'category_id.exists' => 'ประเภทเครื่องดนตรีไม่ถูกต้อง',
@@ -115,9 +116,12 @@ class InstrumentManageController extends Controller
             'picture_url.image' => 'ไฟล์ต้องเป็นรูปภาพ',
             'picture_url.mimes' => 'รองรับเฉพาะไฟล์ jpg/jpeg/png',
             'picture_url.max' => 'ไฟล์รูปภาพไม่เกิน 5MB',
+            'price_per_unit.required' => 'กรุณากรอกราคาเครื่องดนตรีต่อหน่วย',
+            'price_per_unit.numeric' => 'ราคาต้องเป็นตัวเลข',
+            'price_per_unit.min' => 'ราคาต้องมากกว่าหรือเท่ากับ 0',
         ]);
 
-        $data = $request->only('category_id','code','name','brand','status');
+        $data = $request->only('category_id','code','name','brand','status','price_per_unit');
 
         if ($request->hasFile('picture_url')) {
             $path = $request->file('picture_url')->store('instruments', 'public');
@@ -146,6 +150,7 @@ class InstrumentManageController extends Controller
             'brand' => 'nullable|string|max:100',
             'picture_url' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
             'status' => 'required|in:available,unavailable,maintenance',
+            'price_per_unit' => 'required|numeric|min:0',
         ], [
             'name.required' => 'กรุณากรอกชื่อเครื่องดนตรี',
             'status.required' => 'กรุณาเลือกสถานะเครื่องดนตรี',
@@ -153,9 +158,12 @@ class InstrumentManageController extends Controller
             'picture_url.image' => 'ไฟล์ต้องเป็นรูปภาพ',
             'picture_url.mimes' => 'รองรับเฉพาะไฟล์ jpg/jpeg/png',
             'picture_url.max' => 'ไฟล์รูปภาพไม่เกิน 5MB',
+            'price_per_unit.required' => 'กรุณากรอกราคาเครื่องดนตรีต่อหน่วย',
+            'price_per_unit.numeric' => 'ราคาต้องเป็นตัวเลข',
+            'price_per_unit.min' => 'ราคาต้องมากกว่าหรือเท่ากับ 0',
         ]);
 
-        $data = $request->only('name','brand','status');
+        $data = $request->only('name','brand','status','price_per_unit');
 
         if ($request->hasFile('picture_url')) {
             if ($instrument->picture_url && Storage::disk('public')->exists($instrument->picture_url)) {

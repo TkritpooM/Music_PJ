@@ -4,22 +4,22 @@
 
 @section('content')
 <div class="container mt-5">
-    <h2 class="mb-4 fw-bold text-primary">🎵 เครื่องดนตรีในห้อง: {{ $room->name }}</h2>
+    <h2 class="mb-4 fw-bold text-primary">เครื่องดนตรีในห้อง: {{ $room->name }}</h2>
 
     {{-- ข้อความสำเร็จ --}}
     @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle me-2"></i>
-            {{ session('success') }}
+        <div class="alert alert-success alert-dismissible fade show shadow-sm border-0 rounded-3" role="alert">
+            <i class="bi bi-check-circle me-2"></i> {{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
 
+    {{-- ข้อความ error --}}
     @if($errors->any())
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm border-0 rounded-3" role="alert">
             <ul class="mb-0">
                 @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
+                    <li><i class="bi bi-exclamation-circle me-1"></i> {{ $error }}</li>
                 @endforeach
             </ul>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -27,13 +27,13 @@
     @endif
 
     {{-- ฟอร์มเพิ่มเครื่องดนตรี --}}
-    <div class="card mb-4 border-0 shadow-sm">
-        <div class="card-header bg-light fw-bold">เพิ่มเครื่องดนตรีในห้อง</div>
+    <div class="card glass-card mb-4 border-0 shadow-sm">
+        <div class="card-header bg-light fw-bold"><i class="bi bi-plus-circle me-1"></i> เพิ่มเครื่องดนตรีในห้อง</div>
         <div class="card-body">
             <form action="{{ route('admin.rooms.addInstrument', $room->room_id) }}" method="POST">
                 @csrf
                 <div class="row g-3 align-items-center">
-                    <div class="col-md-5">
+                    <div class="col-md-7">
                         <select name="instrument_id" class="form-select" required>
                             <option value="">เลือกเครื่องดนตรี</option>
                             @foreach($instruments as $inst)
@@ -44,7 +44,7 @@
                     <div class="col-md-3">
                         <input type="number" name="quantity" class="form-control" placeholder="จำนวน" min="1" required>
                     </div>
-                    <div class="col-md-2 d-grid">
+                    <div class="col-md-2 d-grid ms-auto">
                         <button type="submit" class="btn btn-success">
                             <i class="bi bi-plus-circle me-1"></i> เพิ่ม
                         </button>
@@ -55,8 +55,8 @@
     </div>
 
     {{-- ตารางเครื่องดนตรี --}}
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-light fw-bold">รายการเครื่องดนตรี</div>
+    <div class="card glass-card border-0 shadow-sm">
+        <div class="card-header bg-light fw-bold"><i class="bi bi-music-note-list me-1"></i> รายการเครื่องดนตรี</div>
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0 text-center">
@@ -111,7 +111,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="4" class="text-muted py-3">ยังไม่มีเครื่องดนตรีในห้องนี้</td>
+                            <td colspan="5" class="text-muted py-3">ยังไม่มีเครื่องดนตรีในห้องนี้</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -129,5 +129,25 @@
       return new bootstrap.Tooltip(tooltipTriggerEl)
     })
 </script>
+@endpush
+
+@push('styles')
+<style>
+    /* Glassmorphism effect */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 16px;
+        transition: all 0.2s ease-in-out;
+    }
+    .glass-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .table-hover tbody tr:hover {
+        background: rgba(255, 255, 255, 0.4);
+    }
+</style>
 @endpush
 @endsection
