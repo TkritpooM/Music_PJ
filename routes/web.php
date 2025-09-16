@@ -10,10 +10,8 @@ use App\Http\Controllers\Admin\PromotionManageController;
 use App\Http\Controllers\Admin\InstrumentManageController;
 use App\Http\Controllers\Admin\LogManageController;
 use App\Http\Controllers\Admin\ProfileManageController;
-
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\User\BookingController;
-
 
 // ----------------------------- Guest Section ----------------------------- //
 Route::get('/', [HomeController::class, 'index'])->name('home');

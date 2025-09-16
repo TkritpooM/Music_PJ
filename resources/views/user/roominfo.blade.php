@@ -40,27 +40,72 @@
 
 <script>
 document.getElementById('checkBtn').addEventListener('click', function() {
-    let form = document.getElementById('availabilityForm');
-    let data = new FormData(form);
+    const form = document.getElementById('availabilityForm');
+    const startInput = form.querySelector('[name="start_time"]');
+    const endInput = form.querySelector('[name="end_time"]');
+
+    if (!startInput.value || !endInput.value) {
+        alert('กรุณาเลือก Start และ End time');
+        return;
+    }
+
+    // สร้าง Date objects (datetime-local เป็น local ISO without timezone)
+    const start = new Date(startInput.value);
+    let end = new Date(endInput.value);
+
+    // ถ้า end <= start ให้สมมติว่าเป็นวันถัดไป (midnight เป็นต้น)
+    if (end <= start) {
+        end.setDate(end.getDate() + 1);
+
+        // อัปเดต input ให้ผู้ใช้เห็นการเปลี่ยนแปลง
+        const pad = n => n.toString().padStart(2, '0');
+        const formatted = end.getFullYear() + '-' + pad(end.getMonth()+1) + '-' + pad(end.getDate())
+            + 'T' + pad(end.getHours()) + ':' + pad(end.getMinutes());
+        endInput.value = formatted;
+    }
+
+    // สร้าง FormData ส่งไป
+    const data = new FormData();
+    data.append('_token', '{{ csrf_token() }}');
+    data.append('start_time', startInput.value);
+    data.append('end_time', endInput.value);
 
     fetch("{{ route('user.room.checkAvailability', $room->room_id) }}", {
         method: 'POST',
-        headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'},
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
         body: data
     })
-    .then(res => res.json())
+    .then(async res => {
+        if (!res.ok) {
+            if (res.status === 422) {
+                const json = await res.json();
+                const messages = Object.values(json.errors || {}).flat().join('\n');
+                alert(messages || 'ข้อมูลไม่ถูกต้อง');
+                return null;
+            }
+            throw new Error('Network error');
+        }
+        return res.json();
+    })
     .then(data => {
-        if(data.conflict) {
+        if (!data) return;
+        if (data.conflict) {
             alert("❌ ห้องนี้ถูกจองแล้วในช่วงเวลาที่เลือก");
         } else {
             document.getElementById('priceResult').innerHTML = `
                 <p>Hours: ${data.hours}</p>
                 <p>Price: ${data.price} ฿</p>
-                <p>Discount: ${data.discount.toFixed(2)} ฿</p>
-                <p><strong>Total: ${data.total.toFixed(2)} ฿</strong></p>
-                <a href="{{ route('user.room.addons', $room->room_id) }}?hours=${data.hours}&total=${data.total}&start_time=${form.start_time.value}&end_time=${form.end_time.value}" class="btn btn-success mt-2">Next → Add-ons</a>
+                <p>Discount: ${Number(data.discount).toFixed(2)} ฿</p>
+                <p><strong>Total: ${Number(data.total).toFixed(2)} ฿</strong></p>
+                <a href="{{ route('user.room.addons', $room->room_id) }}?hours=${data.hours}&total=${data.total}&start_time=${encodeURIComponent(startInput.value)}&end_time=${encodeURIComponent(endInput.value)}" class="btn btn-success mt-2">Next → Add-ons</a>
             `;
         }
+    })
+    .catch(err => {
+        console.error(err);
+        alert('เกิดข้อผิดพลาด โปรดลองอีกครั้ง');
     });
 });
 </script>

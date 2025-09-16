@@ -14,7 +14,7 @@ class RoomManageController extends Controller
 {
     public function rooms()
     {
-        $rooms = Room::all();
+        $rooms = Room::orderBy('room_id', 'asc')->paginate(5);
         return view('admin.roomManage.rooms', compact('rooms'));
     }
 

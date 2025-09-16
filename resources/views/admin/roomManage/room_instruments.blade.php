@@ -100,10 +100,10 @@
                                 </span>
                             </td>
                             <td>
-                                <form action="{{ route('admin.rooms.detachInstrument', [$room->room_id, $inst->instrument_id]) }}" method="POST" onsubmit="return confirm('ลบเครื่องดนตรีออกจากห้อง?');">
+                                <form class="detach-instrument-form m-0" action="{{ route('admin.rooms.detachInstrument', [$room->room_id, $inst->instrument_id]) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="ลบเครื่องดนตรี">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="ลบเครื่องดนตรี">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </form>
@@ -128,6 +128,31 @@
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
       return new bootstrap.Tooltip(tooltipTriggerEl)
     })
+</script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // SweetAlert สำหรับลบเครื่องดนตรี
+    document.querySelectorAll('.detach-instrument-form').forEach(form => {
+        form.addEventListener('submit', function(e){
+            e.preventDefault();
+            Swal.fire({
+                title: 'ยืนยันการลบ',
+                text: 'คุณแน่ใจว่าจะลบเครื่องดนตรีออกจากห้องนี้?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'ลบ',
+                cancelButtonText: 'ยกเลิก',
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d'
+            }).then((result) => {
+                if(result.isConfirmed){
+                    form.submit();
+                }
+            });
+        });
+    });
+});
 </script>
 @endpush
 

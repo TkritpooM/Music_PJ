@@ -37,7 +37,6 @@
             color: #fff !important; /* ตัวหนังสือขาว */
             transition: all 0.3s ease-in-out;
         }
-
         .btn-pay:hover {
             background: rgba(13, 110, 253, 1); /* hover = ฟ้าเข้มขึ้น */
             color: #fff !important; /* ให้ขาวเหมือนเดิม */

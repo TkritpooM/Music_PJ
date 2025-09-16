@@ -104,7 +104,7 @@ class InstrumentManageController extends Controller
             'brand' => 'nullable|string|max:100',
             'picture_url' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
             'status' => 'required|in:available,unavailable,maintenance',
-            'price_per_unit' => 'required|numeric|min:0',
+            'price_per_unit' => 'required|numeric|min:0|regex:/^\d{1,10}(\.\d{1,2})?$/',
         ], [
             'category_id.required' => 'กรุณาเลือกประเภทเครื่องดนตรี',
             'category_id.exists' => 'ประเภทเครื่องดนตรีไม่ถูกต้อง',
@@ -119,6 +119,7 @@ class InstrumentManageController extends Controller
             'price_per_unit.required' => 'กรุณากรอกราคาเครื่องดนตรีต่อหน่วย',
             'price_per_unit.numeric' => 'ราคาต้องเป็นตัวเลข',
             'price_per_unit.min' => 'ราคาต้องมากกว่าหรือเท่ากับ 0',
+            'price_per_unit.regex' => 'ราคาต้องไม่เกิน 10 หลัก และทศนิยมสูงสุด 2 หลัก',
         ]);
 
         $data = $request->only('category_id','code','name','brand','status','price_per_unit');

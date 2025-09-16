@@ -6,10 +6,18 @@
 
     {{-- ข้อความสำเร็จ --}}
     @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show shadow-sm border-0 rounded-3" role="alert">
-            <i class="bi bi-check-circle me-2"></i> {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'สำเร็จ!',
+                    text: `{!! session('success') !!}`,
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            });
+        </script>
     @endif
 
     {{-- ตารางผู้ใช้ --}}
@@ -42,7 +50,9 @@
                             <a href="{{ route('admin.editUser', $user->user_id) }}" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="แก้ไขผู้ใช้">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
-                            <form action="{{ route('admin.users.resetPassword', $user->user_id) }}" method="POST" onsubmit="return confirm('คุณแน่ใจว่าจะรีเซ็ตรหัสผ่าน?');">
+
+                            {{-- Form รีเซ็ตรหัสผ่าน --}}
+                            <form class="reset-password-form m-0" action="{{ route('admin.users.resetPassword', $user->user_id) }}" method="POST">
                                 @csrf
                                 <button type="submit" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="รีเซ็ตรหัสผ่าน">
                                     <i class="bi bi-key-fill"></i>
@@ -57,13 +67,37 @@
     </div>
 </div>
 
-{{-- Initialize Bootstrap tooltip --}}
 @push('scripts')
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-    })
+document.addEventListener('DOMContentLoaded', function () {
+    // Bootstrap tooltip
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // SweetAlert สำหรับรีเซ็ตรหัสผ่าน
+    document.querySelectorAll('.reset-password-form').forEach(form => {
+        form.addEventListener('submit', function(e){
+            e.preventDefault();
+            Swal.fire({
+                title: 'ยืนยันการรีเซ็ตรหัสผ่าน',
+                text: 'คุณแน่ใจว่าจะรีเซ็ตรหัสผ่านผู้ใช้รายนี้?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'รีเซ็ต',
+                cancelButtonText: 'ยกเลิก',
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d'
+            }).then((result) => {
+                if(result.isConfirmed){
+                    form.submit();
+                }
+            });
+        });
+    });
+});
 </script>
 @endpush
 @endsection

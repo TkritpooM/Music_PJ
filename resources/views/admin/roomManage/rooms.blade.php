@@ -97,7 +97,7 @@
                                     <a href="{{ route('admin.rooms.edit', $room->room_id) }}" class="btn btn-sm btn-outline-warning">
                                         <i class="bi bi-pencil-square me-1"></i> แก้ไข
                                     </a>
-                                    <form action="{{ route('admin.rooms.delete', $room->room_id) }}" method="POST" class="m-0" onsubmit="return confirm('คุณแน่ใจหรือไม่ที่จะลบห้องนี้?');">
+                                    <form class="delete-room-form m-0" action="{{ route('admin.rooms.delete', $room->room_id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-outline-danger">
@@ -110,6 +110,11 @@
                         @endforeach
                     </tbody>
                 </table>
+                <div class="mt-3 d-flex justify-content-center">
+                    <nav>
+                        {{ $rooms->links('pagination::bootstrap-5') }}
+                    </nav>
+                </div>
             </div>
         </div>
     </div>
@@ -117,7 +122,6 @@
 
 @push('styles')
 <style>
-    /* Glassmorphism effect */
     .glass-card {
         background: rgba(255, 255, 255, 0.6);
         backdrop-filter: blur(12px);
@@ -132,6 +136,74 @@
     .table-hover tbody tr:hover {
         background: rgba(255, 255, 255, 0.4);
     }
+    .pagination {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 12px;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .pagination .page-link {
+        color: #0d6efd;
+        background-color: rgba(255, 255, 255, 0.4);
+        border: none;
+        margin: 0 2px;
+        transition: all 0.2s;
+    }
+
+    .pagination .page-link:hover {
+        background-color: rgba(255, 255, 255, 0.7);
+        color: #0a58ca;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: rgba(13, 110, 253, 0.8);
+        color: white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
 </style>
 @endpush
+
+@push('scripts')
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+    // SweetAlert สำหรับลบห้อง
+    document.querySelectorAll('.delete-room-form').forEach(form => {
+        form.addEventListener('submit', function(e){
+            e.preventDefault();
+            Swal.fire({
+                title: 'ยืนยันการลบ',
+                text: 'คุณแน่ใจว่าจะลบห้องนี้?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'ลบ',
+                cancelButtonText: 'ยกเลิก',
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d'
+            }).then((result) => {
+                if(result.isConfirmed){
+                    form.submit();
+                }
+            });
+        });
+    });
+
+    // SweetAlert success หลังเพิ่มห้อง
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'สำเร็จ!',
+            text: "{{ session('success') }}",
+            timer: 2000,
+            showConfirmButton: false
+        });
+    @endif
+
+});
+</script>
+@endpush
+
 @endsection

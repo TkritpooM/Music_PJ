@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 16, 2025 at 03:28 PM
+-- Generation Time: Sep 16, 2025 at 09:44 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -36,6 +36,16 @@ CREATE TABLE `activity_logs` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `activity_logs`
+--
+
+INSERT INTO `activity_logs` (`log_id`, `user_id`, `role`, `action_type`, `details`, `created_at`) VALUES
+(1, 3, 'admin', 'toggle_promotion', 'สลับสถานะโปรโมชั่น [GoldCard Discount] เป็น Inactive', '2025-09-16 19:43:16'),
+(2, 3, 'admin', 'toggle_promotion', 'สลับสถานะโปรโมชั่น [GoldCard Discount] เป็น Active', '2025-09-16 19:43:18'),
+(3, 3, 'admin', 'toggle_promotion', 'สลับสถานะโปรโมชั่น [GoldCard Discount] เป็น Inactive', '2025-09-16 19:43:19'),
+(4, 3, 'admin', 'update_profile', 'แก้ไขโปรไฟล์จาก [ชื่อ: test2Logg test2Logg, เบอร์: 0234445551] เป็น [ชื่อ: test2Loggg test2Loggg, เบอร์: 0234445551]', '2025-09-16 19:43:53');
+
 -- --------------------------------------------------------
 
 --
@@ -65,13 +75,15 @@ INSERT INTO `bookings` (`booking_id`, `user_id`, `room_id`, `promo_id`, `start_t
 (81, 6, 12, NULL, '2025-09-11 00:27:00', '2025-09-11 01:27:00', 1800.50, 900.25, 'cancelled', '2025-09-10 17:28:27', '2025-09-16 08:36:20'),
 (82, 6, 12, NULL, '2025-09-11 03:35:00', '2025-09-11 04:35:00', 2801.00, 1400.50, 'cancelled', '2025-09-10 17:35:59', '2025-09-16 08:36:12'),
 (83, 6, 12, NULL, '2025-09-16 01:37:00', '2025-09-16 02:37:00', 3908.50, 1954.25, 'cancelled', '2025-09-15 18:38:14', '2025-09-16 13:08:14'),
-(84, 6, 16, NULL, '2025-09-16 01:44:00', '2025-09-16 04:44:00', 6652.25, 3326.13, 'pending', '2025-09-15 18:44:45', '2025-09-16 09:53:06'),
+(84, 6, 16, NULL, '2025-09-16 01:44:00', '2025-09-16 04:44:00', 6652.25, 3326.13, 'cancelled', '2025-09-15 18:44:45', '2025-09-16 18:26:39'),
 (85, 6, 14, NULL, '2025-09-16 14:46:00', '2025-09-16 15:46:00', 532.35, 266.18, 'confirmed', '2025-09-16 07:47:37', '2025-09-16 09:53:04'),
 (89, 6, 16, NULL, '2025-09-16 15:55:00', '2025-09-16 18:55:00', 2666.25, 1333.13, 'complete', '2025-09-16 08:55:45', '2025-09-16 09:52:50'),
-(90, 6, 11, NULL, '2025-09-16 15:56:00', '2025-09-16 17:56:00', 4596.00, 2298.00, 'complete', '2025-09-16 08:56:16', '2025-09-16 09:51:08'),
-(91, 6, 9, NULL, '2025-09-16 20:53:00', '2025-09-16 21:53:00', 3330.00, 1665.00, 'confirmed', '2025-09-16 09:54:20', '2025-09-16 12:06:09'),
-(92, 6, 12, NULL, '2025-09-16 16:56:00', '2025-09-16 21:56:00', 10238.50, 5119.25, 'confirmed', '2025-09-16 09:56:24', '2025-09-16 12:06:12'),
-(93, 6, 12, NULL, '2025-09-16 18:27:00', '2025-09-16 19:27:00', 0.50, 0.25, 'pending', '2025-09-16 11:30:33', '2025-09-16 11:30:33');
+(90, 6, 11, NULL, '2025-09-16 15:56:00', '2025-09-16 17:56:00', 4596.00, 2298.00, 'cancelled', '2025-09-16 08:56:16', '2025-09-16 18:22:12'),
+(91, 6, 9, NULL, '2025-09-16 20:53:00', '2025-09-16 21:53:00', 3330.00, 1665.00, 'cancelled', '2025-09-16 09:54:20', '2025-09-16 18:19:19'),
+(92, 6, 12, NULL, '2025-09-16 16:56:00', '2025-09-16 21:56:00', 10238.50, 5119.25, 'cancelled', '2025-09-16 09:56:24', '2025-09-16 18:19:24'),
+(93, 6, 12, NULL, '2025-09-16 18:27:00', '2025-09-16 19:27:00', 0.50, 0.25, 'cancelled', '2025-09-16 11:30:33', '2025-09-16 18:14:40'),
+(96, 6, 12, NULL, '2025-09-17 01:04:00', '2025-09-17 03:04:00', 10998.00, 5499.00, 'pending', '2025-09-16 18:05:06', '2025-09-16 18:57:15'),
+(97, 6, 9, NULL, '2025-09-17 01:53:00', '2025-09-17 02:53:00', 4522.50, 2261.25, 'confirmed', '2025-09-16 18:53:29', '2025-09-16 18:57:18');
 
 -- --------------------------------------------------------
 
@@ -115,7 +127,12 @@ INSERT INTO `booking_addons` (`booking_id`, `instrument_id`, `quantity`, `price`
 (92, 2, 6, 100.00),
 (92, 7, 11, 300.00),
 (92, 17, 7, 144.00),
-(92, 18, 8, 666.00);
+(92, 18, 8, 666.00),
+(96, 18, 3, 666.00),
+(97, 2, 3, 100.00),
+(97, 7, 2, 300.00),
+(97, 17, 2, 144.00),
+(97, 18, 5, 666.00);
 
 -- --------------------------------------------------------
 
@@ -226,7 +243,9 @@ INSERT INTO `payments` (`payment_id`, `booking_id`, `amount`, `payment_method`, 
 (23, 90, 2298.00, 'qr_code', 'paid', 'TXN1758012976', '2025-09-16 15:56:16', '2025-09-16 08:56:16'),
 (24, 91, 1665.00, 'qr_code', 'paid', 'TXN1758016460', '2025-09-16 16:54:20', '2025-09-16 09:54:20'),
 (25, 92, 5119.25, 'qr_code', 'paid', 'TXN1758016584', '2025-09-16 16:56:24', '2025-09-16 09:56:24'),
-(26, 93, 0.25, 'qr_code', 'paid', 'TXN1758022233', '2025-09-16 18:30:33', '2025-09-16 11:30:33');
+(26, 93, 0.25, 'qr_code', 'paid', 'TXN1758022233', '2025-09-16 18:30:33', '2025-09-16 11:30:33'),
+(29, 96, 5499.00, 'qr_code', 'paid', 'TXN1758045906', '2025-09-17 01:05:06', '2025-09-16 18:05:06'),
+(30, 97, 2261.25, 'qr_code', 'paid', 'TXN1758048809', '2025-09-17 01:53:29', '2025-09-16 18:53:29');
 
 -- --------------------------------------------------------
 
@@ -251,9 +270,9 @@ CREATE TABLE `promotions` (
 
 INSERT INTO `promotions` (`promo_id`, `name`, `description`, `discount_type`, `discount_value`, `start_date`, `end_date`, `is_active`) VALUES
 (3, 'Holiday Discount Scoopy', 'test', 'percent', 99.99, '2025-09-10', '2025-09-17', 0),
-(4, 'test222', 'test222', 'fixed', 222.00, '2025-09-02', '2025-09-18', 0),
 (8, 'YippyVoucherrr', 'Ehereeee', 'percent', 40.00, '2025-09-11', '2025-09-14', 0),
-(9, 'Discount 10% off\'s', 'Discount rooms price for this events, for sure', 'percent', 10.00, '2025-09-16', '2025-09-23', 1);
+(9, 'Discount 10% off\'s', 'Discount rooms price for this events, for sure', 'percent', 10.00, '2025-09-16', '2025-09-23', 1),
+(10, 'GoldCard Discount', '20% off', 'percent', 20.00, '2025-09-17', '2025-09-24', 0);
 
 -- --------------------------------------------------------
 
@@ -286,7 +305,9 @@ INSERT INTO `receipts` (`receipt_id`, `booking_id`, `receipt_number`, `full_amou
 (23, 90, '00090', 4596.00, 2298.00, 0.00, '2025-09-16 08:56:16'),
 (24, 91, '00091', 3330.00, 1665.00, 0.00, '2025-09-16 09:54:20'),
 (25, 92, '00092', 10238.50, 5119.25, 0.00, '2025-09-16 09:56:24'),
-(26, 93, '00093', 0.50, 0.25, 0.00, '2025-09-16 11:30:33');
+(26, 93, '00093', 0.50, 0.25, 0.00, '2025-09-16 11:30:33'),
+(29, 96, '00096', 10998.00, 5499.00, 0.00, '2025-09-16 18:05:06'),
+(30, 97, '00097', 4522.50, 2261.25, 0.00, '2025-09-16 18:53:29');
 
 -- --------------------------------------------------------
 
@@ -375,11 +396,11 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`user_id`, `firstname`, `lastname`, `username`, `email`, `password_hash`, `phone`, `role`, `created_at`, `updated_at`) VALUES
 (1, 'ssdUpdated', 'RazorUpdated', 'ssd', 'ssd@gmail.com', '$2y$12$CC0qPkH/dXQyMJZXsy7.j.geXF/.eyZOSW.Mhi2xMiGLt6JufNS2K', '0000000000', 'user', '2025-08-28 08:15:50', '2025-08-30 18:42:45'),
 (2, 'AdminUpdated', 'AdminnaUpdated', 'admin', 'admin@gmail.com', '$2y$12$qWLk1jgW9AmYTDegQLnTx.gF4LrmSp/J3LalWgd4oS.vqJuR061Qe', '0123456789', 'admin', '2025-08-28 09:22:19', '2025-08-30 18:43:28'),
-(3, 'test2Logg', 'test2Logg', 'test2', 'test2@gmail.com', '$2y$12$u0Tc4T6MzHLfLJamNqcepu84ex2PImFPr/vzxujZ9t9yqIwD/kMoK', '0234445551', 'admin', '2025-08-28 09:23:38', '2025-09-10 17:58:33'),
+(3, 'test2Loggg', 'test2Loggg', 'test2', 'test2@gmail.com', '$2y$12$u0Tc4T6MzHLfLJamNqcepu84ex2PImFPr/vzxujZ9t9yqIwD/kMoK', '0234445551', 'admin', '2025-08-28 09:23:38', '2025-09-16 19:43:53'),
 (4, 'Testingnew', 'Testingnew', 'Testing123new', 'Testing123@gmail.com', '$2y$12$LLP1NEDU3aScsyyiTiQEo.nkhxvXTY5ZqULn9upgdtkTdQSLaOp5e', '0111111111', 'user', '2025-09-05 16:58:24', '2025-09-11 06:31:35'),
 (5, 'Testingg', 'Testingg', 'Testing333444', 'Testing333@gmail.com', '$2y$12$dUd9BlUtBaJYiV9Yog2VAuVPJs209CxHz.w4NmerNM/jA4ZjukK86', '0123456789', 'user', '2025-09-05 16:59:11', '2025-09-10 18:06:18'),
-(6, 'News', 'Looks', 'Newlookauth3', 'Newlookauth3@gmail.com', '$2y$12$UUwnROXyy9ydejCsTnc7pecOf6nzDsCD16/lrT3LfLOBmvYTkayQ6', '0812345678', 'user', '2025-09-09 06:35:11', '2025-09-10 17:40:33'),
-(7, 'Tester1', 'Tester1', 'TesterLast', 'Tester@gmail.com', '$2y$12$xU4VdVkGBCEn04/f24ndcu2lVVWoNmf5wQIsAds/N4/dgIgo3rr7a', '033333333', 'admin', '2025-09-16 12:45:30', '2025-09-16 13:19:55');
+(6, 'Newssss', 'Looks', 'Newlookauth3', 'Newlookauth3@gmail.com', '$2y$12$UUwnROXyy9ydejCsTnc7pecOf6nzDsCD16/lrT3LfLOBmvYTkayQ6', '0812345678', 'user', '2025-09-09 06:35:11', '2025-09-16 18:53:52'),
+(7, 'Tester12', 'Tester11', 'TesterLast', 'Tester@gmail.com', '$2y$12$4UFgQ8cuTqmJ8c99ptrRZebceDvhCJmcDQsEnGCkiGy4iMZGzyJJu', '033333333', 'admin', '2025-09-16 12:45:30', '2025-09-16 19:13:36');
 
 --
 -- Indexes for dumped tables
@@ -479,25 +500,25 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=96;
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=98;
 
 --
 -- AUTO_INCREMENT for table `instruments`
 --
 ALTER TABLE `instruments`
-  MODIFY `instrument_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `instrument_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `instrument_categories`
 --
 ALTER TABLE `instrument_categories`
-  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `password_resets`
@@ -509,25 +530,25 @@ ALTER TABLE `password_resets`
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `promotions`
 --
 ALTER TABLE `promotions`
-  MODIFY `promo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `promo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `receipts`
 --
 ALTER TABLE `receipts`
-  MODIFY `receipt_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `receipt_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `rooms`
 --
 ALTER TABLE `rooms`
-  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `users`

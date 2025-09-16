@@ -143,35 +143,55 @@ class BookingController extends Controller
 
     public function checkAvailability(Request $request, Room $room)
     {
+        // ตรวจรูปแบบ ISO ของ datetime-local
         $request->validate([
-            'start_time' => 'required|date',
-            'end_time' => 'required|date|after:start_time',
+            'start_time' => ['required','date_format:Y-m-d\TH:i'],
+            'end_time'   => ['required','date_format:Y-m-d\TH:i'],
         ]);
 
-        $start = $request->start_time;
-        $end = $request->end_time;
+        // กำหนด timezone ที่เราต้องการตีความ input (ปรับเป็น 'Asia/Bangkok' หรือ config('app.timezone'))
+        $appTz = config('app.timezone') ?: 'Asia/Bangkok';
+
+        try {
+            $start = Carbon::createFromFormat('Y-m-d\TH:i', $request->start_time, $appTz);
+            $end   = Carbon::createFromFormat('Y-m-d\TH:i', $request->end_time, $appTz);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Invalid datetime format.'], 422);
+        }
+
+        // ถ้า end <= start ให้ถือว่า user ต้องการวันถัดไป (เช่น midnight ของวันถัดไป)
+        if ($end->lessThanOrEqualTo($start)) {
+            $end->addDay();
+        }
+
+        // ถ้า DB ของคุณเก็บเป็น UTC ให้แปลงเป็น UTC ก่อน query
+        // (ถ้า DB เก็บเป็น app timezone ให้ใช้ ->toDateTimeString() โดยตรง)
+        $dbStart = $start->copy()->setTimezone('UTC')->toDateTimeString();
+        $dbEnd   = $end->copy()->setTimezone('UTC')->toDateTimeString();
 
         $conflict = $room->bookings()
             ->where('status', 'confirmed')
-            ->where(function($q) use ($start, $end) {
-                $q->whereBetween('start_time', [$start, $end])
-                ->orWhereBetween('end_time', [$start, $end])
-                ->orWhere(function($q2) use ($start, $end) {
-                    $q2->where('start_time', '<=', $start)
-                        ->where('end_time', '>=', $end);
+            ->where(function($q) use ($dbStart, $dbEnd) {
+                $q->whereBetween('start_time', [$dbStart, $dbEnd])
+                ->orWhereBetween('end_time', [$dbStart, $dbEnd])
+                ->orWhere(function($q2) use ($dbStart, $dbEnd) {
+                    $q2->where('start_time', '<=', $dbStart)
+                        ->where('end_time', '>=', $dbEnd);
                 });
             })
             ->exists();
 
-        $hours = ceil((strtotime($end) - strtotime($start)) / 3600);
+        // คำนวณชั่วโมงแบบแม่นยำ (นาที -> ปัดขึ้นเป็นชั่วโมง)
+        $minutes = $start->diffInMinutes($end);
+        $hours = (int) ceil($minutes / 60);
         $price = $room->price_per_hour * $hours;
 
-        // ใช้โปรโมชั่นล่าสุดถ้ามี
+        // ใช้โปรโมชั่นล่าสุดถ้ามี (เหมือนเดิม)
         $promo = Promotion::where('is_active', true)
-            ->whereDate('start_date', '<=', now())
-            ->whereDate('end_date', '>=', now())
-            ->latest('discount_value')
-            ->first();
+                ->whereDate('start_date', '<=', now())
+                ->whereDate('end_date', '>=', now())
+                ->latest('discount_value')
+                ->first();
 
         $discount_amount = 0;
         if ($promo) {
@@ -185,12 +205,15 @@ class BookingController extends Controller
         $total = max($price - $discount_amount, 0);
 
         return response()->json([
-            'conflict' => $conflict,
-            'hours' => $hours,           // จำนวนชั่วโมง
-            'price' => $price,           // numeric
-            'discount' => $discount_amount, // numeric
-            'total' => $total,           // numeric
-            'promo_name' => $promo?->name
+            'conflict'   => $conflict,
+            'hours'      => $hours,
+            'price'      => $price,
+            'discount'   => $discount_amount,
+            'total'      => $total,
+            'promo_name' => $promo?->name,
+            // คืนค่า start/end ที่ตีความแล้ว (เพื่อดีบัก/แสดงผลหากต้องการ)
+            'start'      => $start->toDateTimeString(),
+            'end'        => $end->toDateTimeString()
         ]);
     }
 
