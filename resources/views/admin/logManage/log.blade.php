@@ -10,6 +10,12 @@
     <div class="card border-0 shadow-lg rounded-4 p-3"
          style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px);">
         <div class="table-responsive">
+            <form action="{{ route('admin.logs.clear') }}" method="POST" class="mb-3 text-end">
+                @csrf
+                <button type="submit" class="btn btn-danger btn-sm">
+                    <i class="bi bi-trash"></i> Clear All Logs
+                </button>
+            </form>
             <table class="table table-hover align-middle text-center mb-0 text-white">
                 <thead class="text-white-50">
                     <tr>
@@ -39,7 +45,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center text-white-50 py-3">ไม่มีข้อมูล Log</td>
+                            <td colspan="6" class="text-center text-black-50 py-3">ไม่มีข้อมูล Log</td>
                         </tr>
                     @endforelse
                 </tbody>

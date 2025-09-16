@@ -32,11 +32,11 @@ class Booking extends Model
         'status',
     ];
 
-    protected $dates = [
-        'start_time',
-        'end_time',
-        'created_at',
-        'updated_at',
+    protected $casts = [
+        'start_time' => 'datetime',
+        'end_time' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     // Relationship กับ User
