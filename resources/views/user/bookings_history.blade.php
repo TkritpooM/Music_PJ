@@ -26,8 +26,8 @@
                 <tr>
                     <td>{{ $b->booking_id }}</td>
                     <td>{{ $b->room->name }}</td>
-                    <td>{{ $b->start_time }}</td>
-                    <td>{{ $b->end_time }}</td>
+                    <td>{{ \Carbon\Carbon::parse($b->start_time)->format('d/m/Y H:i') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($b->end_time)->format('d/m/Y H:i') }}</td>
                     <td>{{ number_format($b->total_price,2) }}</td>
                     <td>{{ ucfirst($b->status) }}</td>
                     <td>

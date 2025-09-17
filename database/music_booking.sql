@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 16, 2025 at 09:44 PM
+-- Generation Time: Sep 17, 2025 at 04:19 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -44,7 +44,10 @@ INSERT INTO `activity_logs` (`log_id`, `user_id`, `role`, `action_type`, `detail
 (1, 3, 'admin', 'toggle_promotion', 'สลับสถานะโปรโมชั่น [GoldCard Discount] เป็น Inactive', '2025-09-16 19:43:16'),
 (2, 3, 'admin', 'toggle_promotion', 'สลับสถานะโปรโมชั่น [GoldCard Discount] เป็น Active', '2025-09-16 19:43:18'),
 (3, 3, 'admin', 'toggle_promotion', 'สลับสถานะโปรโมชั่น [GoldCard Discount] เป็น Inactive', '2025-09-16 19:43:19'),
-(4, 3, 'admin', 'update_profile', 'แก้ไขโปรไฟล์จาก [ชื่อ: test2Logg test2Logg, เบอร์: 0234445551] เป็น [ชื่อ: test2Loggg test2Loggg, เบอร์: 0234445551]', '2025-09-16 19:43:53');
+(4, 3, 'admin', 'update_profile', 'แก้ไขโปรไฟล์จาก [ชื่อ: test2Logg test2Logg, เบอร์: 0234445551] เป็น [ชื่อ: test2Loggg test2Loggg, เบอร์: 0234445551]', '2025-09-16 19:43:53'),
+(5, 6, 'user', 'confirm_payment', 'Booking #00098 confirmed via QR Code', '2025-09-17 13:56:48'),
+(6, 6, 'user', 'confirm_payment', 'Booking #00099 confirmed via QR Code', '2025-09-17 14:10:07'),
+(7, 6, 'user', 'confirm_payment', 'Booking #00100 confirmed via QR Code', '2025-09-17 14:10:35');
 
 -- --------------------------------------------------------
 
@@ -83,7 +86,10 @@ INSERT INTO `bookings` (`booking_id`, `user_id`, `room_id`, `promo_id`, `start_t
 (92, 6, 12, NULL, '2025-09-16 16:56:00', '2025-09-16 21:56:00', 10238.50, 5119.25, 'cancelled', '2025-09-16 09:56:24', '2025-09-16 18:19:24'),
 (93, 6, 12, NULL, '2025-09-16 18:27:00', '2025-09-16 19:27:00', 0.50, 0.25, 'cancelled', '2025-09-16 11:30:33', '2025-09-16 18:14:40'),
 (96, 6, 12, NULL, '2025-09-17 01:04:00', '2025-09-17 03:04:00', 10998.00, 5499.00, 'pending', '2025-09-16 18:05:06', '2025-09-16 18:57:15'),
-(97, 6, 9, NULL, '2025-09-17 01:53:00', '2025-09-17 02:53:00', 4522.50, 2261.25, 'confirmed', '2025-09-16 18:53:29', '2025-09-16 18:57:18');
+(97, 6, 9, NULL, '2025-09-17 01:53:00', '2025-09-17 02:53:00', 4522.50, 2261.25, 'confirmed', '2025-09-16 18:53:29', '2025-09-16 18:57:18'),
+(98, 6, 9, NULL, '2025-09-17 21:00:00', '2025-09-17 22:00:00', 4.50, 2.25, 'confirmed', '2025-09-17 13:56:48', '2025-09-17 13:56:48'),
+(99, 6, 9, NULL, '2025-09-17 22:00:00', '2025-09-17 23:00:00', 4.50, 2.25, 'confirmed', '2025-09-17 14:10:07', '2025-09-17 14:10:07'),
+(100, 6, 9, NULL, '2025-09-17 23:00:00', '2025-09-18 00:00:00', 4.50, 2.25, 'confirmed', '2025-09-17 14:10:35', '2025-09-17 14:10:35');
 
 -- --------------------------------------------------------
 
@@ -245,7 +251,10 @@ INSERT INTO `payments` (`payment_id`, `booking_id`, `amount`, `payment_method`, 
 (25, 92, 5119.25, 'qr_code', 'paid', 'TXN1758016584', '2025-09-16 16:56:24', '2025-09-16 09:56:24'),
 (26, 93, 0.25, 'qr_code', 'paid', 'TXN1758022233', '2025-09-16 18:30:33', '2025-09-16 11:30:33'),
 (29, 96, 5499.00, 'qr_code', 'paid', 'TXN1758045906', '2025-09-17 01:05:06', '2025-09-16 18:05:06'),
-(30, 97, 2261.25, 'qr_code', 'paid', 'TXN1758048809', '2025-09-17 01:53:29', '2025-09-16 18:53:29');
+(30, 97, 2261.25, 'qr_code', 'paid', 'TXN1758048809', '2025-09-17 01:53:29', '2025-09-16 18:53:29'),
+(31, 98, 2.25, 'qr_code', 'paid', 'TXN1758117408', '2025-09-17 20:56:48', '2025-09-17 13:56:48'),
+(32, 99, 2.25, 'qr_code', 'paid', 'TXN1758118207', '2025-09-17 21:10:07', '2025-09-17 14:10:07'),
+(33, 100, 2.25, 'qr_code', 'paid', 'TXN1758118235', '2025-09-17 21:10:35', '2025-09-17 14:10:35');
 
 -- --------------------------------------------------------
 
@@ -307,7 +316,10 @@ INSERT INTO `receipts` (`receipt_id`, `booking_id`, `receipt_number`, `full_amou
 (25, 92, '00092', 10238.50, 5119.25, 0.00, '2025-09-16 09:56:24'),
 (26, 93, '00093', 0.50, 0.25, 0.00, '2025-09-16 11:30:33'),
 (29, 96, '00096', 10998.00, 5499.00, 0.00, '2025-09-16 18:05:06'),
-(30, 97, '00097', 4522.50, 2261.25, 0.00, '2025-09-16 18:53:29');
+(30, 97, '00097', 4522.50, 2261.25, 0.00, '2025-09-16 18:53:29'),
+(31, 98, '00098', 4.50, 2.25, 0.00, '2025-09-17 13:56:48'),
+(32, 99, '00099', 4.50, 2.25, 0.00, '2025-09-17 14:10:07'),
+(33, 100, '00100', 4.50, 2.25, 0.00, '2025-09-17 14:10:35');
 
 -- --------------------------------------------------------
 
@@ -500,13 +512,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=98;
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=101;
 
 --
 -- AUTO_INCREMENT for table `instruments`
@@ -530,7 +542,7 @@ ALTER TABLE `password_resets`
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `promotions`
@@ -542,7 +554,7 @@ ALTER TABLE `promotions`
 -- AUTO_INCREMENT for table `receipts`
 --
 ALTER TABLE `receipts`
-  MODIFY `receipt_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `receipt_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `rooms`

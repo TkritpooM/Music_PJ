@@ -25,11 +25,11 @@
         <div class="row mb-3">
             <div class="col-md-6">
                 <label>Start Time</label>
-                <input type="datetime-local" name="start_time" class="form-control">
+                <input type="datetime-local" name="start_time" class="form-control" step="3600">
             </div>
             <div class="col-md-6">
                 <label>End Time</label>
-                <input type="datetime-local" name="end_time" class="form-control">
+                <input type="datetime-local" name="end_time" class="form-control" step="3600">
             </div>
         </div>
         <button type="button" id="checkBtn" class="btn btn-primary">Check Availability</button>
@@ -38,74 +38,171 @@
     <div id="priceResult" class="mt-4"></div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-document.getElementById('checkBtn').addEventListener('click', function() {
-    const form = document.getElementById('availabilityForm');
-    const startInput = form.querySelector('[name="start_time"]');
-    const endInput = form.querySelector('[name="end_time"]');
+document.addEventListener('DOMContentLoaded', function () {
+    const startInput = document.querySelector('[name="start_time"]');
+    const endInput = document.querySelector('[name="end_time"]');
 
-    if (!startInput.value || !endInput.value) {
-        alert('กรุณาเลือก Start และ End time');
-        return;
+    // ✅ กำหนดค่า default ของ SweetAlert2
+    const SwalDefault = Swal.mixin({
+        scrollbarPadding: false,
+        heightAuto: false
+    });
+
+    // step=3600 ให้เลือกได้เฉพาะชั่วโมง
+    startInput.step = 3600;
+    endInput.step = 3600;
+
+    // ฟังก์ชัน format วันที่ให้เป็น yyyy-MM-ddTHH:mm
+    const formatDateTime = (d) => {
+        const pad = (n) => n.toString().padStart(2, '0');
+        return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate())
+            + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+    };
+
+    // กำหนดค่า default ของ Start Time (ปัดขึ้นชั่วโมงถัดไป)
+    const now = new Date();
+    if (now.getMinutes() > 0 || now.getSeconds() > 0) {
+        now.setHours(now.getHours() + 1, 0, 0, 0);
+    } else {
+        now.setMinutes(0,0,0);
     }
+    startInput.min = formatDateTime(now);
+    startInput.value = formatDateTime(now);
 
-    // สร้าง Date objects (datetime-local เป็น local ISO without timezone)
-    const start = new Date(startInput.value);
-    let end = new Date(endInput.value);
+    // กำหนดค่า default ของ End Time = Start + 1 ชั่วโมง
+    const defaultEnd = new Date(now.getTime() + 60*60*1000);
+    defaultEnd.setMinutes(0,0,0);
+    endInput.min = formatDateTime(defaultEnd);
+    endInput.value = formatDateTime(defaultEnd);
 
-    // ถ้า end <= start ให้สมมติว่าเป็นวันถัดไป (midnight เป็นต้น)
-    if (end <= start) {
-        end.setDate(end.getDate() + 1);
+    // ส่ง bookings ปัจจุบันไป JS
+    const bookings = @json($bookings->map(function($b) {
+        return [
+            'start' => $b->start_time,
+            'end' => $b->end_time
+        ];
+    })->toArray());
 
-        // อัปเดต input ให้ผู้ใช้เห็นการเปลี่ยนแปลง
-        const pad = n => n.toString().padStart(2, '0');
-        const formatted = end.getFullYear() + '-' + pad(end.getMonth()+1) + '-' + pad(end.getDate())
-            + 'T' + pad(end.getHours()) + ':' + pad(end.getMinutes());
-        endInput.value = formatted;
-    }
+    // อัปเดต min และ default ของ end ทุกครั้งที่ start เปลี่ยน
+    startInput.addEventListener('change', function () {
+        if (!startInput.value) return;
+        const start = new Date(startInput.value);
 
-    // สร้าง FormData ส่งไป
-    const data = new FormData();
-    data.append('_token', '{{ csrf_token() }}');
-    data.append('start_time', startInput.value);
-    data.append('end_time', endInput.value);
+        // นาทีล็อคเป็น 00
+        start.setMinutes(0,0,0);
+        startInput.value = formatDateTime(start);
 
-    fetch("{{ route('user.room.checkAvailability', $room->room_id) }}", {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: data
-    })
-    .then(async res => {
-        if (!res.ok) {
-            if (res.status === 422) {
-                const json = await res.json();
-                const messages = Object.values(json.errors || {}).flat().join('\n');
-                alert(messages || 'ข้อมูลไม่ถูกต้อง');
-                return null;
+        const minEnd = new Date(start.getTime() + 60*60*1000);
+        minEnd.setMinutes(0,0,0);
+
+        // ถ้า End <= Start ให้บวกวัน
+        if (minEnd <= start) {
+            minEnd.setDate(minEnd.getDate() + 1);
+        }
+
+        endInput.min = formatDateTime(minEnd);
+        endInput.value = formatDateTime(minEnd);
+    });
+
+    document.getElementById('checkBtn').addEventListener('click', function() {
+        let start = new Date(startInput.value);
+        let end = new Date(endInput.value);
+        const now = new Date();
+
+        // ✅ ปัด start ถ้าเลือกเวลาที่ผ่านไปแล้ว หรือ 00:00 ของวันนี้
+        if (start < now || (start.getHours() === 0 && start.getMinutes() === 0)) {
+            start.setDate(now.getDate() + 1);
+            start.setHours(0,0,0,0);
+            startInput.value = formatDateTime(start);
+        }
+
+        // ✅ ปัด end ให้ start + 1 ชั่วโมง
+        if (end <= start) {
+            end = new Date(start.getTime() + 60*60*1000);
+            endInput.value = formatDateTime(end);
+        }
+
+        // ตรวจสอบ end < start + 1 ชม.
+        if (end < new Date(start.getTime() + 60*60*1000)) {
+            SwalDefault.fire({
+                icon: 'warning',
+                title: '⛔ End time ไม่ถูกต้อง',
+                text: 'End time ต้องอย่างน้อย 1 ชั่วโมงหลัง Start time'
+            });
+            return;
+        }
+
+        // ✅ ตรวจสอบ conflict กับ bookings ปัจจุบัน
+        const conflict = bookings.some(b => {
+            const bStart = new Date(b.start);
+            const bEnd = new Date(b.end);
+            return start < bEnd && end > bStart;
+        });
+
+        if (conflict) {
+            SwalDefault.fire({
+                icon: 'error',
+                title: '❌ ห้องไม่ว่าง',
+                text: 'ห้องนี้ถูกจองแล้วในช่วงเวลาที่เลือก'
+            });
+            return;
+        }
+
+        // ✅ ถ้าไม่มี conflict ส่ง fetch ไป backend
+        const data = new FormData();
+        data.append('_token', '{{ csrf_token() }}');
+        data.append('start_time', startInput.value);
+        data.append('end_time', endInput.value);
+
+        fetch("{{ route('user.room.checkAvailability', $room->room_id) }}", {
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            body: data
+        })
+        .then(async res => {
+            if (!res.ok) {
+                if (res.status === 422) {
+                    const json = await res.json();
+                    const messages = Object.values(json.errors || {}).flat().join('\n');
+                    SwalDefault.fire({
+                        icon: 'error',
+                        title: 'ข้อมูลไม่ถูกต้อง',
+                        text: messages || 'โปรดตรวจสอบข้อมูลอีกครั้ง'
+                    });
+                    return null;
+                }
+                throw new Error('Network error');
             }
-            throw new Error('Network error');
-        }
-        return res.json();
-    })
-    .then(data => {
-        if (!data) return;
-        if (data.conflict) {
-            alert("❌ ห้องนี้ถูกจองแล้วในช่วงเวลาที่เลือก");
-        } else {
-            document.getElementById('priceResult').innerHTML = `
-                <p>Hours: ${data.hours}</p>
-                <p>Price: ${data.price} ฿</p>
-                <p>Discount: ${Number(data.discount).toFixed(2)} ฿</p>
-                <p><strong>Total: ${Number(data.total).toFixed(2)} ฿</strong></p>
-                <a href="{{ route('user.room.addons', $room->room_id) }}?hours=${data.hours}&total=${data.total}&start_time=${encodeURIComponent(startInput.value)}&end_time=${encodeURIComponent(endInput.value)}" class="btn btn-success mt-2">Next → Add-ons</a>
-            `;
-        }
-    })
-    .catch(err => {
-        console.error(err);
-        alert('เกิดข้อผิดพลาด โปรดลองอีกครั้ง');
+            return res.json();
+        })
+        .then(data => {
+            if (!data) return;
+            if (data.conflict) {
+                SwalDefault.fire({
+                    icon: 'error',
+                    title: '❌ ห้องไม่ว่าง',
+                    text: 'ห้องนี้ถูกจองแล้วในช่วงเวลาที่เลือก'
+                });
+            } else {
+                document.getElementById('priceResult').innerHTML = `
+                    <p>Hours: ${data.hours}</p>
+                    <p>Price: ${data.price} ฿</p>
+                    <p>Discount: ${Number(data.discount).toFixed(2)} ฿</p>
+                    <p><strong>Total: ${Number(data.total).toFixed(2)} ฿</strong></p>
+                    <a href="{{ route('user.room.addons', $room->room_id) }}?hours=${data.hours}&total=${data.total}&start_time=${encodeURIComponent(startInput.value)}&end_time=${encodeURIComponent(endInput.value)}" class="btn btn-success mt-2">Next → Add-ons</a>
+                `;
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            SwalDefault.fire({
+                icon: 'error',
+                title: 'เกิดข้อผิดพลาด',
+                text: 'โปรดลองอีกครั้ง'
+            });
+        });
     });
 });
 </script>
