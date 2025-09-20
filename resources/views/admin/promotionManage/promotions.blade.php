@@ -36,7 +36,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($promotions as $promotion)
+                @forelse($promotions as $promotion)
                 <tr class="glass-row">
                     <td>{{ $promotion->promo_id }}</td>
                     <td class="text-start">{{ $promotion->name }}</td>
@@ -78,7 +78,13 @@
                         </div>
                     </td>
                 </tr>
-                @endforeach
+                @empty
+                <tr class="glass-row" style="background: rgba(255,255,255,0.4);">
+                    <td colspan="8" class="text-center text-muted fst-italic py-4">
+                        ยังไม่มีโปรโมชั่น
+                    </td>
+                </tr>
+                @endforelse
             </tbody>
         </table>
     </div>

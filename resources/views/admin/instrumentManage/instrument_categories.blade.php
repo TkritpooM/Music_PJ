@@ -43,7 +43,7 @@
 
     {{-- แสดง Grid --}}
     <div class="row row-cols-2 row-cols-md-4 g-4">
-        @foreach($categories as $category)
+        @forelse($categories as $category)
         <div class="col">
             <div class="card glass-card h-100 border-0 shadow-sm text-center p-4 category-card position-relative">
                 
@@ -71,7 +71,14 @@
                 </a>
             </div>
         </div>
-        @endforeach
+        @empty
+        <div class="col-12">
+            <div class="card glass-card text-center border-0 shadow-sm p-5" style="background: rgba(255,255,255,0.4);">
+                <i class="fa-solid fa-circle-exclamation fs-1 text-muted mb-3"></i>
+                <p class="text-muted fst-italic mb-0">ยังไม่มีประเภทเครื่องดนตรี</p>
+            </div>
+        </div>
+        @endforelse
     </div>
 </div>
 

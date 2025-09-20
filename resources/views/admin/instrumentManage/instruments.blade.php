@@ -72,7 +72,7 @@
 
     {{-- แสดง Grid ของเครื่องดนตรี --}}
     <div class="row row-cols-1 row-cols-md-3 g-4">
-        @foreach($instruments as $instrument)
+        @forelse($instruments as $instrument)
             <div class="col">
                 <div class="card h-100 border-0 shadow-sm rounded-4 bg-light bg-opacity-50" style="backdrop-filter: blur(10px);">
                     @if($instrument->picture_url)
@@ -287,7 +287,14 @@
                 </div>
             </div>
 
-        @endforeach
+        @empty
+            <div class="col-12">
+                <div class="card h-100 border-0 shadow-sm rounded-4 text-center p-5 bg-light bg-opacity-40" style="backdrop-filter: blur(10px);">
+                    <i class="bi bi-exclamation-circle fs-1 text-muted mb-3"></i>
+                    <p class="text-muted fst-italic mb-0">ยังไม่มีเครื่องดนตรีในหมวดนี้</p>
+                </div>
+            </div>
+        @endforelse
     </div>
 </div>
 

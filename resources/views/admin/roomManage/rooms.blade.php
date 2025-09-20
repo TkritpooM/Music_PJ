@@ -74,7 +74,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($rooms as $room)
+                        @forelse($rooms as $room)
                         <tr>
                             <td class="fw-semibold">{{ $room->name }}</td>
                             <td>{{ number_format($room->price_per_hour, 2) }}</td>
@@ -107,7 +107,13 @@
                                 </div>
                             </td>
                         </tr>
-                        @endforeach
+                        @empty
+                        <tr class="bg-light" style="backdrop-filter: blur(8px);">
+                            <td colspan="7" class="text-center text-muted fst-italic py-4">
+                                ยังไม่มีข้อมูลห้องซ้อม
+                            </td>
+                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
                 <div class="mt-3 d-flex justify-content-center">
