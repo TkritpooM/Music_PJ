@@ -66,6 +66,7 @@ class DashboardController extends Controller
         $bookingStatusCounts = [
             'pending'   => $todayBookings->where('status', 'pending')->count(),
             'confirmed' => $todayBookings->where('status', 'confirmed')->count(),
+            'complete' => $todayBookings->where('status', 'complete')->count(),
             'cancelled' => $todayBookings->where('status', 'cancelled')->count(),
         ];
 

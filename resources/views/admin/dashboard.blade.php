@@ -252,10 +252,10 @@ document.addEventListener('DOMContentLoaded', function() {
     new Chart(document.getElementById('statusChart').getContext('2d'), {
         type: 'pie',
         data: {
-            labels: ['Pending', 'Confirmed', 'Cancelled'],
+            labels: ['Pending', 'Confirmed', 'Complete', 'Cancelled'],
             datasets: [{
                 data: @json($bookingStatusCountsArray),
-                backgroundColor: ['#f6c23e','#1cc88a','#e74a3b']
+                backgroundColor: ['#f6c23e','#1cc88a','#4e73df','#e74a3b']
             }]
         },
         options: { responsive: true, maintainAspectRatio: false }

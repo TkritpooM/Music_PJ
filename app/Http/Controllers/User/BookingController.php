@@ -21,7 +21,7 @@ class BookingController extends Controller
     {
         $bookings = Booking::where('user_id', auth()->id())
                             ->orderBy('start_time', 'desc')
-                            ->paginate(5); // Pagination 5 ต่อหน้า
+                            ->paginate(8); // Pagination 5 ต่อหน้า
         return view('user.bookings_history', compact('bookings'));
     }
 
