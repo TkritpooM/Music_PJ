@@ -31,15 +31,32 @@ class UserController extends Controller
 
         // Filter ตาม capacity
         if ($request->filled('capacity')) {
-            $query->where('capacity', '>=', $request->capacity);
+            switch ($request->capacity) {
+                case '1-3':
+                    $query->whereBetween('capacity', [1, 3]);
+                    break;
+                case '4-6':
+                    $query->whereBetween('capacity', [4, 6]);
+                    break;
+                case '7+':
+                    $query->where('capacity', '>=', 7);
+                    break;
+            }
         }
 
         // Filter ตามราคา
-        if ($request->filled('min_price')) {
-            $query->where('price_per_hour', '>=', $request->min_price);
-        }
-        if ($request->filled('max_price')) {
-            $query->where('price_per_hour', '<=', $request->max_price);
+        if ($request->filled('price')) {
+            switch ($request->price) {
+                case 'low':
+                    $query->where('price_per_hour', '<', 200);
+                    break;
+                case 'mid':
+                    $query->whereBetween('price_per_hour', [200, 500]);
+                    break;
+                case 'high':
+                    $query->where('price_per_hour', '>', 500);
+                    break;
+            }
         }
 
         // Filter ตามอุปกรณ์

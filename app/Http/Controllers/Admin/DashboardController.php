@@ -37,17 +37,24 @@ class DashboardController extends Controller
 
         $bookingsByMonth = $this->fillMissingMonths($bookingsByMonthRaw);
 
-        // Label เดือน (ภาษาไทย)
         $monthLabels = [
-            1=>'ม.ค.',2=>'ก.พ.',3=>'มี.ค.',4=>'เม.ย.',
-            5=>'พ.ค.',6=>'มิ.ย.',7=>'ก.ค.',8=>'ส.ค.',
-            9=>'ก.ย.',10=>'ต.ค.',11=>'พ.ย.',12=>'ธ.ค.'
+            1 => 'ม.ค.',
+            2 => 'ก.พ.',
+            3 => 'มี.ค.',
+            4 => 'เม.ย.',
+            5 => 'พ.ค.',
+            6 => 'มิ.ย.',
+            7 => 'ก.ค.',
+            8 => 'ส.ค.',
+            9 => 'ก.ย.',
+            10 => 'ต.ค.',
+            11 => 'พ.ย.',
+            12 => 'ธ.ค.'
         ];
 
         $chartLabels = array_map(fn($m) => $monthLabels[$m], array_keys($bookingsByMonth));
         $chartData   = array_values($bookingsByMonth);
 
-        // สีกราฟ (เดือนยอดสูงสุดเป็นสีแดง)
         $maxBookings = max($chartData);
         $chartBackgroundColors = array_map(
             fn($val) => $val === $maxBookings
@@ -66,7 +73,7 @@ class DashboardController extends Controller
         $bookingStatusCounts = [
             'pending'   => $todayBookings->where('status', 'pending')->count(),
             'confirmed' => $todayBookings->where('status', 'confirmed')->count(),
-            'complete' => $todayBookings->where('status', 'complete')->count(),
+            'complete'  => $todayBookings->where('status', 'complete')->count(),
             'cancelled' => $todayBookings->where('status', 'cancelled')->count(),
         ];
 
@@ -105,6 +112,22 @@ class DashboardController extends Controller
             ->get();
 
         // -----------------------------
+        // ✅ ปฏิทิน (All Bookings)
+        // -----------------------------
+        $allBookings = Booking::with(['room', 'user'])->get();
+
+        $calendarBookings = $allBookings->map(function ($b) {
+            return [
+                'id' => $b->id, // <-- ต้องมี id เพื่อใช้แก้ไข
+                'room_name' => $b->room->name ?? 'N/A',
+                'user_name' => $b->user->firstname . ' ' . $b->user->lastname,
+                'status' => $b->status,
+                'start_time' => $b->start_time,
+                'end_time' => $b->end_time,
+            ];
+        });
+
+        // -----------------------------
         // ✅ ส่งไป View
         // -----------------------------
         return view('admin.dashboard', compact(
@@ -121,13 +144,12 @@ class DashboardController extends Controller
             'monthlyRevenue',
             'topRoomsNames',
             'topRoomsCounts',
-            'recentLogs'
+            'recentLogs',
+            'allBookings',
+            'calendarBookings'
         ));
     }
 
-    /**
-     * เติมค่า 0 ให้เดือนที่ไม่มีข้อมูล
-     */
     private function fillMissingMonths(array $data): array
     {
         $result = [];

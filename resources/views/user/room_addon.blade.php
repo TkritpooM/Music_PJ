@@ -41,7 +41,7 @@
                         <tr>
                             <td>
                                 <img src="{{ $inst->picture_url ? asset('storage/' . $inst->picture_url) : 'https://shorturl.at/YT5O1' }}" 
-                                    alt="{{ $inst->name }}" class="img-thumbnail addon-img">
+                                        alt="{{ $inst->name }}" class="img-thumbnail addon-img" loading="lazy">
                             </td>
                             <td>{{ $inst->name }}</td>
                             <td>{{ number_format($inst->price_per_unit,2) }} ฿</td>
@@ -126,6 +126,9 @@ body {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
 }
+#priceResult {
+    transition: all 0.3s ease;
+}
 </style>
 
 <script>
@@ -149,15 +152,36 @@ function updatePrice() {
     })
     .then(res => res.json())
     .then(data => {
-        document.getElementById('priceResult').innerHTML = `
-            <p><i class="bi bi-cash me-1"></i>Add-on Total: ${data.addon_total} ฿</p>
-            <p><i class="bi bi-check-circle me-1"></i><strong>Final Total: ${Number(data.final_total).toFixed(2)} ฿</strong></p>
-        `;
+        const priceResult = document.getElementById('priceResult');
+
+        // fade out
+        priceResult.style.opacity = 0;
+
+        setTimeout(() => {
+            // อัปเดตข้อความใหม่
+            priceResult.innerHTML = `
+                <p><i class="bi bi-cash me-1"></i>Add-on Total: ${Number(data.addon_total).toFixed(2)} ฿</p>
+                <p><i class="bi bi-check-circle me-1"></i>
+                    <strong>Final Total: ${Number(data.final_total).toFixed(2)} ฿</strong>
+                </p>
+            `;
+
+            // fade in
+            priceResult.style.opacity = 1;
+        }, 150); // รอให้ fade out เสร็จ (0.15s)
     });
 }
 
+function debounce(func, delay) {
+    let timeout;
+    return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func(...args), delay);
+    };
+}
+
 document.querySelectorAll('.addon-input').forEach(input => {
-    input.addEventListener('input', updatePrice);
+    input.addEventListener('input', debounce(updatePrice, 300));
 });
 
 document.getElementById('confirmBtn').addEventListener('click', function(e) {
