@@ -98,6 +98,25 @@ class BookingController extends Controller
         return redirect()->route('user.bookings')->with('success', 'Booking cancelled successfully.');
     }
 
+    public function getAddons($id)
+    {
+        $booking = Booking::with('addons.instrument')->find($id);
+
+        if (!$booking) {
+            return response()->json(['addons' => []]);
+        }
+
+        // map ข้อมูล addons
+        $addons = $booking->addons->map(function ($a) {
+            return [
+                'name' => $a->instrument->name ?? 'Unknown',
+                'quantity' => $a->quantity,
+            ];
+        });
+
+        return response()->json(['addons' => $addons]);
+    }
+
     public function destroy(Booking $booking)
     {
         if ($booking->user_id !== auth()->id() && auth()->user()->role !== 'admin') {

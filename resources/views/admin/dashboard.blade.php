@@ -98,6 +98,7 @@
                             <th>Time</th>
                             <th>Status</th>
                             <th>Manage</th>
+                            <th class="text-center">Details</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -133,6 +134,12 @@
                                                 {{ $booking->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                                         </select>
                                     </form>
+                                </td>
+                                <td class="d-flex justify-content-center align-items-center">
+                                    <button type="button" class="btn btn-sm btn-info" 
+                                        onclick="showAddonsDetails({{ $booking->booking_id }})">
+                                        Details
+                                    </button>
                                 </td>
                             </tr>
                         @endforeach
@@ -379,6 +386,52 @@
             });
         });
     </script>
+
+    <script>
+        const bookingsData = @json($todayBookings);
+
+        function showAddonsDetails(bookingId) {
+            const booking = bookingsData.find(b => b.booking_id === bookingId);
+            const modalBody = document.getElementById('addonsModalBody');
+
+            if (!booking || booking.addons.length === 0) {
+                modalBody.innerHTML = '<p class="text-muted">ไม่มี Add-ons สำหรับการจองนี้</p>';
+            } else {
+                let listHtml = '<ul class="list-group">';
+                booking.addons.forEach(addon => {
+                    listHtml += `
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            ${addon.instrument ? addon.instrument.name : 'N/A'}
+                            <span class="badge bg-primary rounded-pill">x${addon.quantity}</span>
+                        </li>
+                    `;
+                });
+                listHtml += '</ul>';
+                modalBody.innerHTML = listHtml;
+            }
+
+            const modal = new bootstrap.Modal(document.getElementById('addonsModal'));
+            modal.show();
+        }
+    </script>
+
+    <!-- Modal -->
+    <div class="modal fade" id="addonsModal" tabindex="-1" aria-labelledby="addonsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addonsModalLabel">Add-ons Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="addonsModalBody">
+                <!-- รายการ Add-on จะถูกใส่ด้วย JS -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Custom Glassmorphism Style -->
     <style>

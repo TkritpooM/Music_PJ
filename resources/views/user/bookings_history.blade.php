@@ -42,6 +42,11 @@
                                 @if($b->status == 'cancelled') disabled style="opacity:0.6;" @endif>
                             Cancel
                         </button>
+
+                        <button class="btn btn-sm btn-info details-btn"
+                                data-id="{{ $b->booking_id }}">
+                            Details
+                        </button>
                     </td>
                 </tr>
                 @endforeach
@@ -118,6 +123,45 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 }
             });
+        });
+    });
+
+    const detailButtons = document.querySelectorAll('.details-btn');
+
+    detailButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const bookingId = this.dataset.id;
+
+            fetch(`{{ url('/user/my-bookings') }}/${bookingId}/addons`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.addons.length === 0) {
+                        SwalDefault.fire({
+                            icon: 'info',
+                            title: 'ไม่มี Add-ons',
+                            text: 'การจองนี้ไม่มีการเพิ่มอุปกรณ์เสริม'
+                        });
+                    } else {
+                        let html = '<ul style="text-align:left;">';
+                        data.addons.forEach(addon => {
+                            html += `<li><b>${addon.name}</b> — จำนวน ${addon.quantity}</li>`;
+                        });
+                        html += '</ul>';
+
+                        SwalDefault.fire({
+                            title: `Add-ons for Booking #${bookingId}`,
+                            html: html,
+                            icon: 'info'
+                        });
+                    }
+                })
+                .catch(() => {
+                    SwalDefault.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'ไม่สามารถดึงข้อมูล Add-ons ได้'
+                    });
+                });
         });
     });
 });

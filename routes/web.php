@@ -104,6 +104,7 @@ Route::middleware(['auth'])->group(function() {
     Route::get('/user/my-bookings/{booking}/edit', [BookingController::class, 'edit'])->name('user.bookings.edit');
     Route::put('/bookings/{booking}', [BookingController::class, 'update'])->name('user.bookings.update');
     Route::post('/user/my-bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('user.bookings.cancel');
+    Route::get('/user/my-bookings/{booking}/addons', [BookingController::class, 'getAddons']);
     Route::delete('/bookings/{booking}', [BookingController::class, 'destroy'])->name('user.bookings.destroy');
 
     // ----------------------------- ฺRoom Info ----------------------------- //

@@ -66,7 +66,7 @@ class DashboardController extends Controller
         // -----------------------------
         // ✅ การจองวันนี้ (Today Bookings)
         // -----------------------------
-        $todayBookings = Booking::with(['room', 'user'])
+        $todayBookings = Booking::with(['room', 'user', 'addons.instrument'])
             ->whereDate('start_time', Carbon::today())
             ->get();
 
